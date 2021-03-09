@@ -35,11 +35,11 @@
 
     <!-- Filtri -->
     <filter>
-        <filter-name>DBAttoriFilter</filter-name>
-        <filter-class>it.units.filters.DBAttoriFilter</filter-class>
+        <filter-name>AuthenticationFilter</filter-name>
+        <filter-class>it.units.filters.AuthenticationFilter</filter-class>
     </filter>
     <filter-mapping>
-        <filter-name>DBAttoriFilter</filter-name>
+        <filter-name>AuthenticationFilter</filter-name>
         <url-pattern>/api/attori/modInfo</url-pattern>
         <url-pattern>/api/attori/delete</url-pattern>
     </filter-mapping>
