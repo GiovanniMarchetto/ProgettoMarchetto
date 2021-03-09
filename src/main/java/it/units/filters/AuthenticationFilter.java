@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebFilter
-public class DBAttoriFilter implements Filter {
+public class AuthenticationFilter implements Filter {
     //TODO: cambia nome al filtro
     @Override
     public void init(FilterConfig filterConfig) {
