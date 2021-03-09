@@ -10,5 +10,5 @@ public class FixedVariables {
     // TODO: decidere se mettere anche l'indirizzo per il download
     public static final String BASE_IND_FILES = HOMEPAGE + "api/files/upload";
 
-
+    public static final boolean debug = false;
 }
