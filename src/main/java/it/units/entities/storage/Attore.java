@@ -3,7 +3,6 @@ package it.units.entities.storage;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
-import it.units.utils.PasswordAssistant;
 
 @Entity
 public class Attore {
@@ -28,12 +27,11 @@ public class Attore {
 
     public Attore(String username, String password, String name, String email, String role, String logo) {
         this.username = username;
+        this.password = password;
+        this.salt = "";
         this.name = name;
         this.email = email;
         this.role = role;
-        String sale = PasswordAssistant.generateSalt();
-        this.salt = sale;
-        this.password = PasswordAssistant.hashPassword(password, sale);
         this.logo = logo;
     }
 

@@ -5,11 +5,12 @@ import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
 import java.util.Base64;
+import java.util.UUID;
 
 @Entity
 public class Files {
     @Id
-    private Long id;
+    private String id;
 
     @Index
     private String usernameUpl;
@@ -33,6 +34,7 @@ public class Files {
     }
 
     public Files(String usernameUpl, String usernameCons, String file, String name, String dataCaricamento, String hashtag) {
+        this.id = UUID.randomUUID().toString();
         this.usernameUpl = usernameUpl;
         this.usernameCons = usernameCons;
         this.file = Base64.getDecoder().decode(file);
@@ -43,11 +45,11 @@ public class Files {
         this.indirizzoIP = "";
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
