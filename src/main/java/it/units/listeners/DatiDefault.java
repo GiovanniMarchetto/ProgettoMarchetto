@@ -3,6 +3,8 @@ package it.units.listeners;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.VoidWork;
 import it.units.entities.storage.Attore;
+import it.units.persistance.AbstractHelper;
+import it.units.persistance.AttoreHelper;
 import it.units.utils.FixedVariables;
 
 import javax.servlet.ServletContextEvent;
@@ -17,9 +19,7 @@ public class DatiDefault implements ServletContextListener {
         ObjectifyService.run(new VoidWork() {
             public void vrun() {
                 Attore attore = new Attore("admin@prog.com", "admin@prog.com", "Admin", "admin@prog.com", FixedVariables.ADMINISTRATOR, "");
-//                AttoreInfo attoreInfo = new AttoreInfo(attore);
-//                AttoreHelper.saveDelayed(attore);
-//                AttoreHelper.saveDelayed(attoreInfo);
+                AttoreHelper.saveDelayed(attore,true);
             }
         });
     }

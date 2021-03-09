@@ -10,12 +10,12 @@ public class FilterAssistant {
             if (FixedVariables.debug)
                 System.out.println("\n" + ruoloRichiesto.toUpperCase(Locale.ROOT) + " FILTER for path " + ((HttpServletRequest) servletRequest).getPathInfo());
 
-            String token = JWTAssistant.getJWTToken((HttpServletRequest) servletRequest);
+            String token = JWTAssistant.getTokenJWTFromRequest((HttpServletRequest) servletRequest);
 
-            if (!JWTAssistant.jwtVerifica(token))
+            if (!JWTAssistant.verificaJWT(token))
                 throw new Exception("Il token non ha passato la verifica!");
 
-            String role = JWTAssistant.jwtGetRole(token);
+            String role = JWTAssistant.getRoleFromJWT(token);
 
             if (controlloRuolo && !role.equals(ruoloRichiesto))
                 throw new Exception("Non è un " + ruoloRichiesto + "...");

@@ -35,7 +35,7 @@ public class JWTAssistant {
             "IeDbLNrfiJUfalALpcwK2";
     private static final Algorithm algoritmo = Algorithm.HMAC256(secret);
 
-    public static String jwtCreazione(String username, String ruolo, String name, String email) {
+    public static String creaJWT(String username, String ruolo, String name, String email) {
         try {
             Date dataCorrente = new Date();
             Calendar dataScadenzaCalendar = Calendar.getInstance();
@@ -69,7 +69,7 @@ public class JWTAssistant {
         }
     }
 
-    public static boolean jwtVerifica(String token) {
+    public static boolean verificaJWT(String token) {
         try {
             JWTVerifier verifier = JWT.require(algoritmo)
                     .withIssuer("marchetto")
@@ -82,7 +82,7 @@ public class JWTAssistant {
         }
     }
 
-    public static DecodedJWT jwtDecodifica(String token) {
+    public static DecodedJWT decodificaJWT(String token) {
         try {
             return JWT.decode(token);
         } catch (JWTDecodeException exception) {
@@ -91,17 +91,16 @@ public class JWTAssistant {
         }
     }
 
-    public static String getJWTToken(HttpServletRequest request) {
+    public static String getTokenJWTFromRequest(HttpServletRequest request) {
         return request.getHeader("Authorization").substring(7);
     }
 
-    public static String jwtGetRole(String token) {
-        Claim ruolo = Objects.requireNonNull(jwtDecodifica(token)).getClaim("role");
+    public static String getRoleFromJWT(String token) {
+        Claim ruolo = Objects.requireNonNull(decodificaJWT(token)).getClaim("role");
         return ruolo.asString();
     }
 
-    public static String jwtGetUsername(String token) {
-        return Objects.requireNonNull(jwtDecodifica(token)).getSubject();
+    public static String getUsernameFromJWT(String token) {
+        return Objects.requireNonNull(decodificaJWT(token)).getSubject();
     }
-    //TODO: cambiare nomi
 }
