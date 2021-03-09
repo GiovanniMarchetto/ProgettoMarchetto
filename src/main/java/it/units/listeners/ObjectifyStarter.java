@@ -2,6 +2,7 @@ package it.units.listeners;
 
 
 import com.googlecode.objectify.ObjectifyService;
+import it.units.entities.proxies.FilesInfo;
 import it.units.entities.storage.Attore;
 import it.units.entities.storage.Files;
 
@@ -17,7 +18,7 @@ public class ObjectifyStarter implements ServletContextListener {
         ObjectifyService.register(Attore.class);
         ObjectifyService.register(Files.class);
 
-//        ObjectifyService.register(FilesInfo.class);
+        ObjectifyService.register(FilesInfo.class);
 //        ObjectifyService.register(AttoreInfo.class);
 
 //        ObjectifyService.register(SupportAttore.class);
