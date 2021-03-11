@@ -1,8 +1,5 @@
 package it.units.entities.support;
 
-import com.googlecode.objectify.annotation.Entity;
-
-@Entity
 public class FromTo {
 
     private String from;

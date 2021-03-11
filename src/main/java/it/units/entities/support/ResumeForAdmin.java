@@ -1,8 +1,5 @@
 package it.units.entities.support;
 
-import com.googlecode.objectify.annotation.Entity;
-import com.googlecode.objectify.annotation.Id;
-
 
 public class ResumeForAdmin {
 

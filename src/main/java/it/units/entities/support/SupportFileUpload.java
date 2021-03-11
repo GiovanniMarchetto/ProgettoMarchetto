@@ -1,12 +1,10 @@
 package it.units.entities.support;
 
-import com.googlecode.objectify.annotation.Entity;
 import it.units.utils.UtilsRest;
 
-@Entity
 public class SupportFileUpload {
 
-//TODO: serve veramente questa entità di supporto?
+//TODO: serve veramente questa entità di supporto? -> si perché ha una stringa per file, unica alternativa è mettere una stringa nel file info
     private String file;
 
     private String nameFile;

@@ -9,7 +9,7 @@ import java.io.IOException;
 
 @WebFilter
 public class AuthenticationFilter implements Filter {
-    //TODO: cambia nome al filtro
+
     @Override
     public void init(FilterConfig filterConfig) {
     }

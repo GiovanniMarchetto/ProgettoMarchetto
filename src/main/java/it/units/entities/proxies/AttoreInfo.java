@@ -1,13 +1,9 @@
 package it.units.entities.proxies;
 
-import com.googlecode.objectify.annotation.Entity;
-import com.googlecode.objectify.annotation.Id;
 import it.units.entities.storage.Attore;
 
-@Entity
 public class AttoreInfo {
 
-    @Id
     private String username;
 
     private String name;
