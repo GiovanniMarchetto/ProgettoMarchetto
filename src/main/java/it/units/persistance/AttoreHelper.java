@@ -1,7 +1,9 @@
 package it.units.persistance;
 
 import it.units.entities.proxies.AttoreInfo;
+import it.units.entities.proxies.FilesInfo;
 import it.units.entities.storage.Attore;
+import it.units.entities.storage.Files;
 import it.units.utils.PasswordAssistant;
 
 import java.util.ArrayList;
@@ -31,13 +33,17 @@ public class AttoreHelper extends AbstractHelper {
     }
 
     public static List<AttoreInfo> ListaAttoriRuolo(String ruolo) {
-        //TODO: controlla se funziona il filter
         List<Attore> attoreList = ofy().load().type(Attore.class).filter("role", ruolo).list();
-        List<AttoreInfo> infoAttoreList = new ArrayList<>();
+        return getAttoreInfoList(attoreList);
+    }
+
+    //TODO: forse si può generalizzare mettendo le due classi
+    public static List<AttoreInfo> getAttoreInfoList(List<Attore> attoreList) {
+        List<AttoreInfo> attoreInfoList = new ArrayList<>();
         for (Attore a : attoreList) {
-            infoAttoreList.add(new AttoreInfo(a));
+            attoreInfoList.add(new AttoreInfo(a));
         }
-        return infoAttoreList;
+        return attoreInfoList;
     }
 
 }

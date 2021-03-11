@@ -162,14 +162,20 @@ public class AttoriManager {
             }
 
             AttoreHelper.deleteEntity(attoreDaEliminare);
-            if (attoreDaEliminare.getRole().equals(FixedVariables.UPLOADER)) {
-                List<Files> listaFilesUploaderEliminato = FilesHelper.listaFilesConsumer(attoreDaEliminare.getUsername());
-                for (Files fileDaEliminare : listaFilesUploaderEliminato)
-                    FilesHelper.deleteEntity(fileDaEliminare);
-
-                List<FilesInfo> listaInfoFilesEliminatiUploaderEliminato = FilesHelper.listaInfoFilesEliminati();
-                for (FilesInfo fileInfoDaEliminare : listaInfoFilesEliminatiUploaderEliminato)
-                    FilesHelper.deleteEntity(fileInfoDaEliminare);
+            switch (attoreDaEliminare.getRole()) {
+                case FixedVariables.UPLOADER:
+                    List<Files> listaFilesUploaderEliminato = FilesHelper.listaFilesUploader(attoreDaEliminare.getUsername());
+                    listaFilesUploaderEliminato.forEach(FilesHelper::deleteEntity);
+                    break;
+                case FixedVariables.CONSUMER:
+                    List<Files> listaFilesConsumerEliminato = FilesHelper.listaFilesConsumer(attoreDaEliminare.getUsername());
+                    for (Files fileDaEliminare : listaFilesConsumerEliminato) {
+                        fileDaEliminare.setFile(null);
+                        FilesHelper.saveNow(fileDaEliminare);
+                    }
+                    break;
+                default:
+                    break;
             }
 
             return "Delete actor " + username + " completed";

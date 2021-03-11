@@ -33,14 +33,14 @@ public class ListManager {
     @Path("/uploaders")
     @Produces(MediaType.APPLICATION_JSON)
     public List<AttoreInfo> getUploadersWithDocumentsForTheConsumer() {
-        List<AttoreInfo> listUploaders = new ArrayList<>();
+        List<Attore> uploadersList = new ArrayList<>();
         List<FilesInfo> filesConsumer = getFilesConsumer();
         for (FilesInfo f : filesConsumer) {
-            AttoreInfo a = new AttoreInfo(Objects.requireNonNull(AttoreHelper.getById(Attore.class, f.getUsernameUpl())));
-            if (!listUploaders.contains(a))
-                listUploaders.add(a);
+            Attore a = AttoreHelper.getById(Attore.class, f.getUsernameUpl());
+            if (!uploadersList.contains(a))
+                uploadersList.add(a);
         }
-        return listUploaders;
+        return AttoreHelper.getAttoreInfoList(uploadersList);
     }
 
     @GET

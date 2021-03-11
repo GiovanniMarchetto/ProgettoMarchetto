@@ -1,6 +1,5 @@
 package it.units.api;
 
-import it.units.entities.proxies.FilesInfo;
 import it.units.entities.storage.Attore;
 import it.units.entities.storage.Files;
 import it.units.entities.support.SupportFileUpload;
@@ -35,7 +34,7 @@ public class FilesManager {
         try {
             Files fileDaScaricare = FilesHelper.getById(Files.class, id);
 
-            if (fileDaScaricare == null)
+            if (fileDaScaricare == null || fileDaScaricare.getFile() == null)
                 throw new IOException("Il file richiesto non è presente nel database");
 
             if (fileDaScaricare.getDataVisualizzazione().equals("")) {
@@ -82,7 +81,7 @@ public class FilesManager {
                 String passwordProvvisoria = UUID.randomUUID().toString();
                 Attore nuovoConsumer = new Attore(supportFileUpload.getUsernameCons(), passwordProvvisoria,
                         supportFileUpload.getNameCons(), supportFileUpload.getEmailCons(), FixedVariables.CONSUMER, "");
-                AttoreHelper.saveDelayed(nuovoConsumer,true);
+                AttoreHelper.saveDelayed(nuovoConsumer, true);
 
                 String mailCreazioneAttore = MailAssistant.sendMailCreazioneAttore(nuovoConsumer, passwordProvvisoria, usernameUpl);
                 if (mailCreazioneAttore.contains("ERR"))
@@ -119,12 +118,12 @@ public class FilesManager {
     @Consumes(MediaType.APPLICATION_JSON)
     public String deleteFile(@PathParam("fileId") String fileId) {
         try {
+            //TODO: mettere il controllo: deve essere lo stesso uploader che l'ha caricato!!
             Files file = FilesHelper.getById(Files.class, fileId);
-            if (file==null)
+            if (file == null || file.getFile() == null)
                 throw new Exception("File da eliminare inesistente!");
-            FilesHelper.deleteEntity(file);
-            FilesInfo fileEliminato = new FilesInfo(file);
-            FilesHelper.saveDelayed(fileEliminato);
+            file.setFile(null);
+            FilesHelper.saveDelayed(file);
             return "delete file " + fileId + " completed";
         } catch (Exception e) {
             System.out.println(e.getMessage() + "\n");
