@@ -48,7 +48,7 @@ public class FilesManager {
             return responseBuilder.build();
         } catch (Exception e) {
             System.out.println(e.getMessage() + "\n");
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return Response.status(Response.Status.NOT_FOUND).entity("ERR - " + e.getMessage()).build();
         }
     }
 
@@ -58,9 +58,6 @@ public class FilesManager {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response uploadFile(SupportFileUpload supportFileUpload) {
         try {
-            //TODO: valutare se tenere l'entità di supporto
-            //TODO: aggiungere dati per il resoconto (creare entità resoconto così da mantenere le info relative agli upload anche se si cancellano i file)
-
             String usernameUpl = JWTAssistant.getUsernameFromJWT(JWTAssistant.getTokenJWTFromRequest(request));
             supportFileUpload.setUsernameUpl(usernameUpl);
             supportFileUpload.setDataCaricamento(UtilsRest.getDataString());
@@ -102,14 +99,14 @@ public class FilesManager {
                 System.out.println(mailNotifica);
 
 
-                return Response
-                        .status(Response.Status.OK)
-                        .entity("Upload file completato.")
-                        .build();
+            return Response
+                    .status(Response.Status.OK)
+                    .entity("Upload file completato.")
+                    .build();
 
         } catch (MyException e) {
             if (FixedVariables.debug) System.out.println(e.getMessage() + "\n");
-            return Response.status(Response.Status.BAD_REQUEST).build();//TODO: sarebbe da mandargli il messaggio d'errore
+            return Response.status(Response.Status.BAD_REQUEST).entity("ERR - " + e.getMessage()).build();
         }
     }
 
@@ -125,7 +122,7 @@ public class FilesManager {
 
             String token = JWTAssistant.getTokenJWTFromRequest(request);
             String usernameFromJWT = JWTAssistant.getUsernameFromJWT(token);
-            if(!file.getUsernameUpl().equals(usernameFromJWT))
+            if (!file.getUsernameUpl().equals(usernameFromJWT))
                 throw new MyException("Lo può cancellare direttamente solo lo stesso uploader che lo ha caricato");
 
             file.setFile(null);
@@ -136,7 +133,7 @@ public class FilesManager {
                     .build();
         } catch (MyException e) {
             if (FixedVariables.debug) System.out.println(e.getMessage() + "\n");
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return Response.status(Response.Status.NOT_FOUND).entity("ERR - " + e.getMessage()).build();
         }
     }
 

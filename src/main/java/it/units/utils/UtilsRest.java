@@ -34,6 +34,13 @@ public class UtilsRest {
         return dateTimeFormatter.format(dataCorrente);
     }
 
+    public static String getDataString(long giorniAntecedenti) {
+        LocalDateTime dataCorrente = LocalDateTime.now();
+        LocalDateTime dataFinale =dataCorrente.minusDays(giorniAntecedenti);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return dateTimeFormatter.format(dataFinale);
+    }
+
     public static void stampaDatiPassati(Attore attore, String azione) {
         System.out.println("\n------------" + azione + "-----------");
         System.out.println("------------DATI UTENTE-----------");

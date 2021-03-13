@@ -47,7 +47,7 @@ public class LoginManager {
                     .build();
         } catch (MyException e) {
             if (FixedVariables.debug) System.out.println(e.getMessage() + "\n");
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return Response.status(Response.Status.NOT_FOUND).entity("ERR - " + e.getMessage()).build();
         }
     }
 }
