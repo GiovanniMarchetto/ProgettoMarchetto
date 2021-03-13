@@ -5,10 +5,7 @@ import it.units.entities.storage.Files;
 import it.units.entities.support.SupportFileUpload;
 import it.units.persistance.AttoreHelper;
 import it.units.persistance.FilesHelper;
-import it.units.utils.FixedVariables;
-import it.units.utils.JWTAssistant;
-import it.units.utils.MailAssistant;
-import it.units.utils.UtilsRest;
+import it.units.utils.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -59,7 +56,7 @@ public class FilesManager {
     @POST
     @Path("/upload")
     @Consumes(MediaType.APPLICATION_JSON)
-    public String uploadFile(SupportFileUpload supportFileUpload) {
+    public Response uploadFile(SupportFileUpload supportFileUpload) {
         try {
             //TODO: valutare se tenere l'entità di supporto
             //TODO: aggiungere dati per il resoconto (creare entità resoconto così da mantenere le info relative agli upload anche se si cancellano i file)
@@ -73,10 +70,10 @@ public class FilesManager {
             if (attore == null) {
 
                 if (UtilsRest.isSyntaxUsernameWrong(supportFileUpload.getUsernameCons(), FixedVariables.CONSUMER))
-                    throw new Exception("Username per il consumer non conforme alle regole.");
+                    throw new MyException("Username per il consumer non conforme alle regole.");
 
                 if (supportFileUpload.getEmailCons().equals("") || supportFileUpload.getNameCons().equals(""))
-                    throw new Exception("Informazioni mancanti per la creazione del nuovo username");
+                    throw new MyException("Informazioni mancanti per la creazione del nuovo username");
 
                 String passwordProvvisoria = UUID.randomUUID().toString();
                 Attore nuovoConsumer = new Attore(supportFileUpload.getUsernameCons(), passwordProvvisoria,
@@ -85,7 +82,7 @@ public class FilesManager {
 
                 String mailCreazioneAttore = MailAssistant.sendMailCreazioneAttore(nuovoConsumer, passwordProvvisoria, usernameUpl);
                 if (mailCreazioneAttore.contains("ERR"))
-                    throw new Exception(mailCreazioneAttore);
+                    throw new MyException(mailCreazioneAttore);
                 if (FixedVariables.debug)
                     System.out.println(mailCreazioneAttore);
 
@@ -100,15 +97,19 @@ public class FilesManager {
 
             String mailNotifica = MailAssistant.sendNotifica(supportFileUpload, usernameUpl, newFile.getId());
             if (mailNotifica.contains("ERR"))
-                throw new Exception(mailNotifica);
+                throw new MyException(mailNotifica);
             if (FixedVariables.debug)
                 System.out.println(mailNotifica);
 
-            return "Upload file completato.";
 
-        } catch (Exception e) {
-            System.out.println(e.getMessage() + "\n");
-            return "ERR - " + e.getMessage();
+                return Response
+                        .status(Response.Status.OK)
+                        .entity("Upload file completato.")
+                        .build();
+
+        } catch (MyException e) {
+            if (FixedVariables.debug) System.out.println(e.getMessage() + "\n");
+            return Response.status(Response.Status.BAD_REQUEST).build();//TODO: sarebbe da mandargli il messaggio d'errore
         }
     }
 
@@ -116,18 +117,26 @@ public class FilesManager {
     @Path("/delete/{fileId}")
     @DELETE
     @Consumes(MediaType.APPLICATION_JSON)
-    public String deleteFile(@PathParam("fileId") String fileId) {
+    public Response deleteFile(@PathParam("fileId") String fileId) {
         try {
-            //TODO: mettere il controllo: deve essere lo stesso uploader che l'ha caricato!!
             Files file = FilesHelper.getById(Files.class, fileId);
             if (file == null || file.getFile() == null)
-                throw new Exception("File da eliminare inesistente!");
+                throw new MyException("File da eliminare inesistente!");
+
+            String token = JWTAssistant.getTokenJWTFromRequest(request);
+            String usernameFromJWT = JWTAssistant.getUsernameFromJWT(token);
+            if(!file.getUsernameUpl().equals(usernameFromJWT))
+                throw new MyException("Lo può cancellare direttamente solo lo stesso uploader che lo ha caricato");
+
             file.setFile(null);
             FilesHelper.saveDelayed(file);
-            return "delete file " + fileId + " completed";
-        } catch (Exception e) {
-            System.out.println(e.getMessage() + "\n");
-            return "ERR - " + e.getMessage();
+            return Response
+                    .status(Response.Status.OK)
+                    .entity("delete file " + fileId + " completed")
+                    .build();
+        } catch (MyException e) {
+            if (FixedVariables.debug) System.out.println(e.getMessage() + "\n");
+            return Response.status(Response.Status.NOT_FOUND).build();
         }
     }
 

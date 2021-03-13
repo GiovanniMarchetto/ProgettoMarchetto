@@ -1,6 +1,5 @@
 package it.units.api;
 
-import it.units.entities.proxies.FilesInfo;
 import it.units.entities.storage.Attore;
 import it.units.entities.storage.Files;
 import it.units.persistance.AttoreHelper;
@@ -12,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -28,21 +28,21 @@ public class AttoriManager {
     @Path("/registration")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public String registration(Attore attore) {
+    public Response registration(Attore attore) {
         try {
             if (FixedVariables.debug)
                 UtilsRest.stampaDatiPassati(attore, "registration");
 
             if (!attore.getRole().equals(FixedVariables.CONSUMER)) {
                 if (!FilterAssistant.filtroPerRuolo(request, FixedVariables.ADMINISTRATOR, true))
-                    throw new Exception("Solo gli administrator possono registrare questo tipo di utenti");
+                    throw new MyException("Solo gli administrator possono registrare questo tipo di utenti");
             }
 
             if (AttoreHelper.getById(Attore.class, attore.getUsername()) != null)
-                throw new Exception("Username già esistente");
+                throw new MyException("Username già esistente");
 
             if (UtilsRest.isSyntaxUsernameWrong(attore.getUsername(), attore.getRole()))
-                throw new Exception("Username non conforme alle regole.");
+                throw new MyException("Username non conforme alle regole.");
 
             if (!attore.getRole().equals(FixedVariables.UPLOADER))
                 attore.setLogo("");
@@ -52,10 +52,16 @@ public class AttoriManager {
             if (FixedVariables.debug)
                 System.out.println("REGISTRAZIONE EFFETTUATA --> " + attore.getUsername());
 
-            return "Registrazione eseguita - " + attore.getUsername();
-        } catch (Exception e) {
-            System.out.println(e.getMessage() + "\n");
-            return "ERR - " + e.getMessage();
+            return Response
+                    .status(Response.Status.OK)
+                    .entity("Registrazione eseguita - " + attore.getUsername())
+                    .build();
+        } catch (MyException e) {
+            if (FixedVariables.debug) System.out.println(e.getMessage() + "\n");
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .entity("ERR - " + e.getMessage())
+                    .build();
         }
     }
 
@@ -63,13 +69,13 @@ public class AttoriManager {
     @Path("/modInfo")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public String modificaInformazioni(Attore attoreModificato) {
+    public Response modificaInformazioni(Attore attoreModificato) {
         try {
             if (FixedVariables.debug)
                 UtilsRest.stampaDatiPassati(attoreModificato, "modifica attore");
 
             if (!FilterAssistant.filtroPerRuolo(request, "modifica informazioni", false))
-                throw new Exception("Token non disponibile, non puoi modificare");
+                throw new MyException("Token non disponibile, non puoi modificare");
 
             String token = JWTAssistant.getTokenJWTFromRequest(request);
             String usernameAttoreLoggato = JWTAssistant.getUsernameFromJWT(token);
@@ -79,22 +85,22 @@ public class AttoriManager {
 
             Attore attoreDatabase = AttoreHelper.getById(Attore.class, usernameAttoreModifica);
             if (attoreDatabase == null || !ruoloAttoreModifica.equals(attoreDatabase.getRole()))
-                throw new Exception("Username da modificare inesistente");
+                throw new MyException("Username da modificare inesistente");
 
             if (!(usernameAttoreLoggato.equals(usernameAttoreModifica))) {
                 switch (ruoloAttoreLoggato) {
                     case FixedVariables.CONSUMER:
-                        throw new Exception("Un consumer può modificare solo sè stesso");
+                        throw new MyException("Un consumer può modificare solo sè stesso");
                     case FixedVariables.UPLOADER:
                         if (!ruoloAttoreModifica.equals(FixedVariables.CONSUMER))
-                            throw new Exception("Un uploader può modificare solo sè stesso o un consumer");
+                            throw new MyException("Un uploader può modificare solo sè stesso o un consumer");
                         break;
                     case FixedVariables.ADMINISTRATOR:
                         if (ruoloAttoreModifica.equals(FixedVariables.CONSUMER))
-                            throw new Exception("Un amministratore non può modificare i consumer");
+                            throw new MyException("Un amministratore non può modificare i consumer");
                         break;
                     default:
-                        throw new Exception("Non c'è il ruolo da modificare!!!");
+                        throw new MyException("Non c'è il ruolo da modificare!!!");
                 }
             }
 
@@ -126,39 +132,46 @@ public class AttoriManager {
 
             if (modifiche.get()) {
                 AttoreHelper.saveNow(attoreModificato, modifichePassword.get());
-                return "Modifica attore eseguita - " + usernameAttoreModifica;
+                return Response
+                        .status(Response.Status.OK)
+                        .entity("Modifica attore eseguita - " + usernameAttoreModifica)
+                        .build();
             } else {
-                return "WARN Nessun dato da modificare immesso";
+                return Response
+                        .status(Response.Status.OK)
+                        .entity("WARN Nessun dato da modificare immesso")
+                        .build();
             }
-
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage() + "\n");
-            return "ERR - " + e.getMessage();
+        } catch (MyException e) {
+            if (FixedVariables.debug) System.out.println(e.getMessage() + "\n");
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .entity("ERR - " + e.getMessage())
+                    .build();
         }
     }
 
     @DELETE
     @Path("/delete/{username}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public String deleteActor(@PathParam("username") String username) {
+    public Response deleteActor(@PathParam("username") String username) {
         try {
             Attore attoreDaEliminare = AttoreHelper.getById(Attore.class, username);
 
             if (attoreDaEliminare == null)
-                throw new Exception("Username inesistente");
+                throw new MyException("Username inesistente");
 
             //TODO: modificare logica (anche se va bene)
             if (attoreDaEliminare.getRole().equals(FixedVariables.CONSUMER)) {
                 if (!FilterAssistant.filtroPerRuolo(request, FixedVariables.UPLOADER, true))
-                    throw new Exception("Solo gli uploader possono eliminare i consumer");
+                    throw new MyException("Solo gli uploader possono eliminare i consumer");
             } else {
                 if (!FilterAssistant.filtroPerRuolo(request, FixedVariables.ADMINISTRATOR, true))
-                    throw new Exception("Solo gli administrator possono eliminare amministratori e uploader");
+                    throw new MyException("Solo gli administrator possono eliminare amministratori e uploader");
 
                 String usernameLogged = JWTAssistant.getUsernameFromJWT(JWTAssistant.getTokenJWTFromRequest(request));
                 if (attoreDaEliminare.getUsername().equals(usernameLogged))
-                    throw new Exception("Un administrator non può eliminare sè stesso!!!");
+                    throw new MyException("Un administrator non può eliminare sè stesso!!!");
             }
 
             AttoreHelper.deleteEntity(attoreDaEliminare);
@@ -178,10 +191,16 @@ public class AttoriManager {
                     break;
             }
 
-            return "Delete actor " + username + " completed";
-        } catch (Exception e) {
-            System.out.println(e.getMessage() + "\n");
-            return "ERR - " + e.getMessage();
+            return Response
+                    .status(Response.Status.OK)
+                    .entity("Delete actor " + username + " completed")
+                    .build();
+        } catch (MyException e) {
+            if (FixedVariables.debug) System.out.println(e.getMessage() + "\n");
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .entity("ERR - " + e.getMessage())
+                    .build();
         }
     }
 

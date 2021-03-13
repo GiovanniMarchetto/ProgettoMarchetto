@@ -14,9 +14,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Path("/list")
@@ -27,29 +32,50 @@ public class ListManager {
     @Context
     private HttpServletResponse response;
 
-
+/*
+* https://stackoverflow.com/questions/47327162/messagebodywriter-not-found-for-media-type-application-xml
+* The idea of GenericEntity
+* */
     //---------CONSUMER-PAGE----------
     @GET
     @Path("/uploaders")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<AttoreInfo> getUploadersWithDocumentsForTheConsumer() {
-        List<Attore> uploadersList = new ArrayList<>();
-        List<FilesInfo> filesConsumer = getFilesConsumer();
-        for (FilesInfo f : filesConsumer) {
-            Attore a = AttoreHelper.getById(Attore.class, f.getUsernameUpl());
-            if (!uploadersList.contains(a))
-                uploadersList.add(a);
+    public Response getUploadersWithDocumentsForTheConsumer() {
+        try {
+            List<Attore> uploadersList = new ArrayList<>();
+            String token = JWTAssistant.getTokenJWTFromRequest(request);
+            String consumer = JWTAssistant.getUsernameFromJWT(token);
+            List<FilesInfo> filesConsumer = FilesHelper.listaInfoFilesConsumer(consumer);
+            for (FilesInfo f : filesConsumer) {
+                Attore a = AttoreHelper.getById(Attore.class, f.getUsernameUpl());
+                if (!uploadersList.contains(a))
+                    uploadersList.add(a);
+            }
+            return Response
+                    .status(Response.Status.OK)
+                    .entity(new GenericEntity<List<AttoreInfo>> (AttoreHelper.getAttoreInfoList(uploadersList)) {})
+                    .build();
+        } catch (Exception e) {
+            if (FixedVariables.debug) System.out.println(e.getMessage() + "\n");
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
-        return AttoreHelper.getAttoreInfoList(uploadersList);
     }
 
     @GET
     @Path("/filesConsumer")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<FilesInfo> getFilesConsumer() {
-        String token = JWTAssistant.getTokenJWTFromRequest(request);
-        String consumer = JWTAssistant.getUsernameFromJWT(token);
-        return FilesHelper.listaInfoFilesConsumer(consumer);
+    public Response getFilesConsumer() {
+        try {
+            String token = JWTAssistant.getTokenJWTFromRequest(request);
+            String consumer = JWTAssistant.getUsernameFromJWT(token);
+            return Response
+                    .status(Response.Status.OK)
+                    .entity(new GenericEntity<List<FilesInfo>> (FilesHelper.listaInfoFilesConsumer(consumer)) {})
+                    .build();
+        } catch (Exception e) {
+            if (FixedVariables.debug) System.out.println(e.getMessage() + "\n");
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
     }
 //---------END CONSUMER-PAGE----------
 
@@ -58,17 +84,33 @@ public class ListManager {
     @GET
     @Path("/consumers")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<AttoreInfo> getConsumers() {
-        return AttoreHelper.ListaAttoriRuolo(FixedVariables.CONSUMER);
+    public Response getConsumers() {
+        try {
+            return Response
+                    .status(Response.Status.OK)
+                    .entity(new GenericEntity<List<AttoreInfo>> (AttoreHelper.ListaAttoriRuolo(FixedVariables.CONSUMER)) {})
+                    .build();
+        } catch (Exception e) {
+            if (FixedVariables.debug) System.out.println(e.getMessage() + "\n");
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @GET
     @Path("/filesUploader")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<FilesInfo> getFilesUploader() {
-        String token = JWTAssistant.getTokenJWTFromRequest(request);
-        String uploader = JWTAssistant.getUsernameFromJWT(token);
-        return FilesHelper.listaInfoFilesUploader(uploader);
+    public Response getFilesUploader() {
+        try {
+            String token = JWTAssistant.getTokenJWTFromRequest(request);
+            String uploader = JWTAssistant.getUsernameFromJWT(token);
+            return Response
+                    .status(Response.Status.OK)
+                    .entity(new GenericEntity<List<FilesInfo>> (FilesHelper.listaInfoFilesUploader(uploader)) {})
+                    .build();
+        } catch (Exception e) {
+            if (FixedVariables.debug) System.out.println(e.getMessage() + "\n");
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
     }
 //---------END UPLOADER-PAGE----------
 
@@ -78,7 +120,7 @@ public class ListManager {
     @Path("/resumeForAdmin")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public List<ResumeForAdmin> getFilesAll(FromTo date) {
+    public Response getFilesAll(FromTo date) {
         try {
             Date fromDate = new SimpleDateFormat("yyyy-MM-dd").parse(date.getFrom());
             Date toDate = new SimpleDateFormat("yyyy-MM-dd").parse(date.getTo());
@@ -118,10 +160,14 @@ public class ListManager {
                 }
                 resoconto.add(new ResumeForAdmin(upl.getUsername(), upl.getName(), upl.getEmail(), numDocCaricati.get(), consDiversi.size()));
             }
-            return resoconto;
+
+            return Response
+                    .status(Response.Status.OK)
+                    .entity(new GenericEntity<List<ResumeForAdmin>> (resoconto) {})
+                    .build();
         } catch (Exception e) {
-            System.out.println(e.getMessage() + "\n" + "Localizzazione: " + e.getLocalizedMessage() + "\n");
-            return null;
+            if (FixedVariables.debug) System.out.println(e.getMessage() + "\n");
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
 //---------END ADMINISTRATOR-PAGE----------
