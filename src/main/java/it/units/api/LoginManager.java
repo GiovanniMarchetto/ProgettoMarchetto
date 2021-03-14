@@ -3,9 +3,9 @@ package it.units.api;
 import it.units.entities.storage.Attore;
 import it.units.persistance.AttoreHelper;
 import it.units.utils.FixedVariables;
-import it.units.utils.JWTAssistant;
+import it.units.assistants.JWTAssistant;
 import it.units.utils.MyException;
-import it.units.utils.PasswordAssistant;
+import it.units.assistants.PasswordAssistant;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

@@ -1,6 +1,6 @@
 package it.units.filters;
 
-import it.units.utils.FilterAssistant;
+import it.units.assistants.FilterAssistant;
 import it.units.utils.FixedVariables;
 
 import javax.servlet.*;
@@ -23,7 +23,6 @@ public class UploaderFilter implements Filter {
             HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
             httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
         }
-        //TODO: verifica se funziona il forbidden
     }
 
     @Override

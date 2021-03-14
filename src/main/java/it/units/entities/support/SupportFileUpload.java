@@ -4,7 +4,6 @@ import it.units.utils.UtilsRest;
 
 public class SupportFileUpload {
 
-//TODO: serve veramente questa entità di supporto? -> si perché ha una stringa per file, unica alternativa è mettere una stringa nel file info
     private String file;
 
     private String nameFile;

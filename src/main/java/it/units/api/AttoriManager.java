@@ -1,5 +1,9 @@
 package it.units.api;
 
+import it.units.assistants.FilterAssistant;
+import it.units.assistants.JWTAssistant;
+import it.units.assistants.PasswordAssistant;
+import it.units.entities.proxies.AttoreInfo;
 import it.units.entities.storage.Attore;
 import it.units.entities.storage.Files;
 import it.units.persistance.AttoreHelper;
@@ -134,16 +138,18 @@ public class AttoriManager {
                 AttoreHelper.saveNow(attoreModificato, modifichePassword.get());
                 return Response
                         .status(Response.Status.OK)
-                        .entity("Modifica attore eseguita - " + usernameAttoreModifica)
+                        .entity(new AttoreInfo(attoreModificato))//TODO: da controllare
                         .build();
             } else {
-                return Response
-                        .status(Response.Status.OK)
-                        .entity("WARN Nessun dato da modificare immesso")
-                        .build();
+                throw new MyException("WARN Nessun dato da modificare immesso");
             }
         } catch (MyException e) {
             if (FixedVariables.debug) System.out.println(e.getMessage() + "\n");
+            if (e.getMessage().startsWith("WARN"))
+                return Response
+                        .status(Response.Status.NOT_FOUND)
+                        .entity(e.getMessage())
+                        .build();
             return Response
                     .status(Response.Status.BAD_REQUEST)
                     .entity("ERR - " + e.getMessage())

@@ -1,7 +1,9 @@
-package it.units.utils;
+package it.units.assistants;
 
 import it.units.entities.storage.Attore;
 import it.units.entities.support.SupportFileUpload;
+import it.units.persistance.AttoreHelper;
+import it.units.utils.FixedVariables;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -47,7 +49,7 @@ public class MailAssistant {
         }
     }
 
-    public static String sendMailCreazioneAttore(Attore attore,String passwordProvvisoria, String usernameUpl) {
+    public static String sendMailCreazioneAttore(Attore attore, String passwordProvvisoria, String usernameUpl) {
         return sendMail(usernameUpl + "@progmarchetto.appspotmail.com", "Uploader " + usernameUpl,
                 attore.getEmail(), attore.getName(),
                 "Creazione account " + attore.getRole(),
@@ -55,21 +57,25 @@ public class MailAssistant {
                         + "Le credenziali sono: \n " +
                         "Username: " + attore.getUsername() + "\n" +
                         "Password: " + passwordProvvisoria + "\n" +
+                        "Nome: " + attore.getName() + "\n" +
+                        "Email: " + attore.getEmail() + "\n" +
                         "\n Se vuole andare sul nostro sito acceda a: " + FixedVariables.HOMEPAGE + "\n" +
-                        "\n Le consigliamo vivamente di cambiare la password.\n Cordiali saluti.",
+                        "\n Cordiali saluti.",
                 "Creazione del consumer " + attore.getUsername() + " avvenuta. \n"
         );
     }
 
-    //TODO: da sistemare le informazioni
     public static String sendNotifica(SupportFileUpload supportFileUpload, String usernameUpl, String fileID) {
 
         String indFile = FixedVariables.BASE_IND_FILES + "/" + fileID;
+        Attore uploader = AttoreHelper.getById(Attore.class, usernameUpl);
+        if (uploader==null)
+            return "ERR: uploader non trovato";
 
         return sendMail(usernameUpl + "@progmarchetto.appspotmail.com", "Uploader " + usernameUpl,
                 supportFileUpload.getEmailCons(), supportFileUpload.getNameCons(),
                 "Nuovo file caricato",
-                "È statocaricato un nuovo file da parte di " + usernameUpl + ".\n" +
+                "È statocaricato un nuovo file da parte di " + uploader.getName() + ".\n" +
                         "Il nome del file caricato è: " + supportFileUpload.getNameFile() + ".\n" +
                         "\n Se vuole andare sul nostro sito acceda a: " + FixedVariables.HOMEPAGE + "\n" +
                         "\n Se vuole scaricare direttamente il file: " + indFile + "\n"

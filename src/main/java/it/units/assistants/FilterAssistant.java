@@ -1,4 +1,6 @@
-package it.units.utils;
+package it.units.assistants;
+
+import it.units.utils.FixedVariables;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;

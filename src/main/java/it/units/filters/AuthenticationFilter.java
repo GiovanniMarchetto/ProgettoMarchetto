@@ -1,6 +1,6 @@
 package it.units.filters;
 
-import it.units.utils.FilterAssistant;
+import it.units.assistants.FilterAssistant;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -22,7 +22,6 @@ public class AuthenticationFilter implements Filter {
             HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
             httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
         }
-        //TODO: verifica se funziona il forbidden
     }
 
     @Override

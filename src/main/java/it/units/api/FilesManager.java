@@ -1,5 +1,7 @@
 package it.units.api;
 
+import it.units.assistants.JWTAssistant;
+import it.units.assistants.MailAssistant;
 import it.units.entities.storage.Attore;
 import it.units.entities.storage.Files;
 import it.units.entities.support.SupportFileUpload;
@@ -101,7 +103,7 @@ public class FilesManager {
 
             return Response
                     .status(Response.Status.OK)
-                    .entity("Upload file completato.")
+                    .entity(newFile.getId())
                     .build();
 
         } catch (MyException e) {

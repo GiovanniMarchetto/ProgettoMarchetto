@@ -51,6 +51,7 @@
     <filter-mapping>
         <filter-name>AdministratorFilter</filter-name>
         <url-pattern>/api/list/resumeForAdmin</url-pattern>
+        <url-pattern>/api/list/administrators</url-pattern>
     </filter-mapping>
 
     <filter>
