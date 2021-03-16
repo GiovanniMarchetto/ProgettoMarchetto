@@ -158,7 +158,7 @@ public class AttoriManager {
                     .entity(new AttoreInfo(attoreDatabase))
                     .build();
 
-        } catch (MyException e) {
+        } catch (Exception e) {
             if (FixedVariables.debug) System.out.println(e.getMessage() + "\n");
             return Response
                     .status(Response.Status.BAD_REQUEST)
@@ -194,8 +194,6 @@ public class AttoriManager {
                 throw new MyException("Username inesistente.");
 
             String token = JWTAssistant.getTokenJWTFromRequest(request);
-            FilterAssistant.controlloPrivilegi(token, attoreDaEliminare.getRole());
-
             if (JWTAssistant.getUsernameFromJWT(token).equals(attoreDaEliminare.getUsername()))
                 throw new MyException("Non puoi eliminare te stesso.");
 
@@ -221,7 +219,7 @@ public class AttoriManager {
                     .status(Response.Status.OK)
                     .entity("Delete actor " + username + " completed")
                     .build();
-        } catch (MyException e) {
+        } catch (Exception e) {
             if (FixedVariables.debug) System.out.println(e.getMessage() + "\n");
             return Response
                     .status(Response.Status.BAD_REQUEST)

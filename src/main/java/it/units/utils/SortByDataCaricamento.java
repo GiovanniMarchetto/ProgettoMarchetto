@@ -6,6 +6,6 @@ import java.util.Comparator;
 
 public class SortByDataCaricamento implements Comparator<FilesInfo> {
     public int compare(FilesInfo a, FilesInfo b) {
-        return a.getDataCaricamento().compareTo(b.getDataCaricamento());
+        return b.getDataCaricamento().compareTo(a.getDataCaricamento());
     }
 }
