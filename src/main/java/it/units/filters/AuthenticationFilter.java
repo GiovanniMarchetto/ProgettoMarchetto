@@ -16,7 +16,7 @@ public class AuthenticationFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        if (FilterAssistant.filtroPerRuolo(servletRequest, "db attori", false))
+        if (FilterAssistant.filtroPerRuolo(servletRequest, "", false))
             filterChain.doFilter(servletRequest, servletResponse);
         else {
             HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;

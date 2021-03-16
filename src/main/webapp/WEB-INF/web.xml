@@ -41,7 +41,7 @@
     <filter-mapping>
         <filter-name>AuthenticationFilter</filter-name>
         <url-pattern>/api/attori/modInfo</url-pattern>
-        <url-pattern>/api/attori/delete</url-pattern>
+        <url-pattern>/api/attori/delete/*</url-pattern>
     </filter-mapping>
 
     <filter>

@@ -8,7 +8,9 @@ import it.units.entities.storage.Attore;
 import it.units.entities.storage.Files;
 import it.units.persistance.AttoreHelper;
 import it.units.persistance.FilesHelper;
-import it.units.utils.*;
+import it.units.utils.FixedVariables;
+import it.units.utils.MyException;
+import it.units.utils.UtilsRest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -69,7 +71,21 @@ public class AttoriManager {
         }
     }
 
-    @POST
+    /**
+     * Web Service che espone la possibilità di modificare un attore del sistema.
+     * Da specifiche:
+     * - gli username non si possono mai modificare;
+     * - i consumer possono modificare solo il loro nome e la loro email;
+     * - gli uploader possono modificare le informazioni (compresa la password) proprie e dei consumer;
+     * - gli amministratori possono modificare le informazioni (compresa la password) proprie, degli amministratori e degli uploader.
+     *
+     * @param attoreModificato l'attore con le informazioni da modificare.
+     *                         Se l'username è vuoto allora le modifiche verranno fatte all'account a cui appartiene il token.
+     * @return ritorna una Response di conferma con le informazioni dell'attore appena modificato.
+     * Se non vengono modificate informazioni viene tornata una Response NO_CONTENT con una stringa di warning.
+     * Se incorrono errori viene tornata una Response BAD_REQUEST accompagnata da una stringa con dei dettagli.
+     */
+    @PATCH
     @Path("/modInfo")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -78,35 +94,19 @@ public class AttoriManager {
             if (FixedVariables.debug)
                 UtilsRest.stampaDatiPassati(attoreModificato, "modifica attore");
 
-            if (!FilterAssistant.filtroPerRuolo(request, "modifica informazioni", false))
-                throw new MyException("Token non disponibile, non puoi modificare");
-
             String token = JWTAssistant.getTokenJWTFromRequest(request);
-            String usernameAttoreLoggato = JWTAssistant.getUsernameFromJWT(token);
-            String ruoloAttoreLoggato = JWTAssistant.getRoleFromJWT(token);
-            String usernameAttoreModifica = attoreModificato.getUsername().equals("") ? usernameAttoreLoggato : attoreModificato.getUsername();
             String ruoloAttoreModifica = attoreModificato.getRole();
+            String usernameAttoreModifica;
+            if (attoreModificato.getUsername().equals("")) {
+                usernameAttoreModifica = JWTAssistant.getUsernameFromJWT(token);
+            } else {
+                usernameAttoreModifica = attoreModificato.getUsername();
+                FilterAssistant.controlloPrivilegi(token, ruoloAttoreModifica);
+            }
 
             Attore attoreDatabase = AttoreHelper.getById(Attore.class, usernameAttoreModifica);
             if (attoreDatabase == null || !ruoloAttoreModifica.equals(attoreDatabase.getRole()))
                 throw new MyException("Username da modificare inesistente");
-
-            if (!(usernameAttoreLoggato.equals(usernameAttoreModifica))) {
-                switch (ruoloAttoreLoggato) {
-                    case FixedVariables.CONSUMER:
-                        throw new MyException("Un consumer può modificare solo sè stesso");
-                    case FixedVariables.UPLOADER:
-                        if (!ruoloAttoreModifica.equals(FixedVariables.CONSUMER))
-                            throw new MyException("Un uploader può modificare solo sè stesso o un consumer");
-                        break;
-                    case FixedVariables.ADMINISTRATOR:
-                        if (ruoloAttoreModifica.equals(FixedVariables.CONSUMER))
-                            throw new MyException("Un amministratore non può modificare i consumer");
-                        break;
-                    default:
-                        throw new MyException("Non c'è il ruolo da modificare!!!");
-                }
-            }
 
             AtomicBoolean modifiche = new AtomicBoolean(false);
             AtomicBoolean modifichePassword = new AtomicBoolean(false);
@@ -134,22 +134,20 @@ public class AttoriManager {
                 modifichePassword.set(true);
             }
 
-            if (modifiche.get()) {
-                AttoreHelper.saveNow(attoreModificato, modifichePassword.get());
+            if (!modifiche.get()) {
                 return Response
-                        .status(Response.Status.OK)
-                        .entity(new AttoreInfo(attoreModificato))//TODO: da controllare
+                        .status(Response.Status.BAD_REQUEST)
+                        .entity("WARN Nessun dato da modificare immesso")
                         .build();
-            } else {
-                throw new MyException("WARN Nessun dato da modificare immesso");
             }
+            AttoreHelper.saveNow(attoreDatabase, modifichePassword.get());
+            return Response
+                    .status(Response.Status.OK)
+                    .entity(new AttoreInfo(attoreDatabase))
+                    .build();
+
         } catch (MyException e) {
             if (FixedVariables.debug) System.out.println(e.getMessage() + "\n");
-            if (e.getMessage().startsWith("WARN"))
-                return Response
-                        .status(Response.Status.NOT_FOUND)
-                        .entity(e.getMessage())
-                        .build();
             return Response
                     .status(Response.Status.BAD_REQUEST)
                     .entity("ERR - " + e.getMessage())
@@ -157,6 +155,22 @@ public class AttoriManager {
         }
     }
 
+    /**
+     * Web Service che espone la possibilità di eliminare un attore del sistema.
+     * Da specifiche:
+     * - nessun attore può eliminare sè stesso;
+     * - i consumer non possono eliminare attori;
+     * - gli uploader possono eliminare soltanto i consumer;
+     * - gli amministratori possono eliminare soltanto altri amministratori o gli uploader.
+     * Quando si va ad eliminare un uploader si vanno ad eliminare completamente dal database
+     * anche i suoi files. Se invece eliminiamo un consumer viene eliminato soltanto il contenuto
+     * del files, rimangono però le informazioni in quanto servono per i resoconti
+     * richiesti dagli amministratori.
+     *
+     * @param username l'username dell'utente da eliminare
+     * @return ritorna una Response di conferma o BAD_REQUEST se si rileva un errore,
+     * in ogni caso la risposta viene accompagnata da una stringa con dei dettagli
+     */
     @DELETE
     @Path("/delete/{username}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -165,22 +179,16 @@ public class AttoriManager {
             Attore attoreDaEliminare = AttoreHelper.getById(Attore.class, username);
 
             if (attoreDaEliminare == null)
-                throw new MyException("Username inesistente");
+                throw new MyException("Username inesistente.");
 
-            //TODO: modificare logica (anche se va bene)
-            if (attoreDaEliminare.getRole().equals(FixedVariables.CONSUMER)) {
-                if (!FilterAssistant.filtroPerRuolo(request, FixedVariables.UPLOADER, true))
-                    throw new MyException("Solo gli uploader possono eliminare i consumer");
-            } else {
-                if (!FilterAssistant.filtroPerRuolo(request, FixedVariables.ADMINISTRATOR, true))
-                    throw new MyException("Solo gli administrator possono eliminare amministratori e uploader");
+            String token = JWTAssistant.getTokenJWTFromRequest(request);
+            FilterAssistant.controlloPrivilegi(token, attoreDaEliminare.getRole());
 
-                String usernameLogged = JWTAssistant.getUsernameFromJWT(JWTAssistant.getTokenJWTFromRequest(request));
-                if (attoreDaEliminare.getUsername().equals(usernameLogged))
-                    throw new MyException("Un administrator non può eliminare sè stesso!!!");
-            }
+            if (JWTAssistant.getUsernameFromJWT(token).equals(attoreDaEliminare.getUsername()))
+                throw new MyException("Non puoi eliminare te stesso.");
 
             AttoreHelper.deleteEntity(attoreDaEliminare);
+
             switch (attoreDaEliminare.getRole()) {
                 case FixedVariables.UPLOADER:
                     List<Files> listaFilesUploaderEliminato = FilesHelper.listaFilesUploader(attoreDaEliminare.getUsername());
