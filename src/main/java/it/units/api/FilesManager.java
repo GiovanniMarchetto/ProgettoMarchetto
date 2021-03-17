@@ -97,6 +97,23 @@ public class FilesManager {
         return responseBuilder.build();
     }
 
+    /**
+     * Web Service che espone la possibilità (ad un uploader) di caricare un file.
+     *
+     * Se il consumer a cui è diretto non esiste allora lo crea e
+     *  gli manda una mail con i dati di accesso (password generata casualmente).
+     * Dopo aver caricato il file invia una mail di notifica (organizzata come da specifiche).
+     *
+     * @param supportFileUpload entità di supporto che prevede in entrata:
+     *                          - il file in formato di stringa in base64
+     *                          - il nome del file
+     *                          - una string per gli hashtag
+     *                          - username del consumer a cui è diretto
+     *                          - il nome del consumer (utilizzato solo se è un nuovo consumer)
+     *                          - email del consumer (utilizzato solo se è un nuovo consumer)
+     * @return una Response con un messaggio di conferma se va tutto a buon fine.
+     *  Altrimenti ritorna una BAD_REQUEST con in allegato una stringa con la spiegazione dell'errore.
+     */
     @POST
     @Path("/upload")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -124,6 +141,7 @@ public class FilesManager {
                 String mailCreazioneAttore = MailAssistant.sendMailCreazioneAttore(nuovoConsumer, passwordProvvisoria, usernameUpl);
                 if (mailCreazioneAttore.contains("ERR"))
                     throw new MyException(mailCreazioneAttore);
+
                 if (FixedVariables.debug)
                     System.out.println(mailCreazioneAttore);
 
@@ -132,11 +150,11 @@ public class FilesManager {
                 supportFileUpload.setEmailCons(attore.getEmail());
             }
 
-            Files newFile = new Files(supportFileUpload.getUsernameUpl(), supportFileUpload.getUsernameCons(), supportFileUpload.getFile(),
+            Files nuovoFile = new Files(supportFileUpload.getUsernameUpl(), supportFileUpload.getUsernameCons(), supportFileUpload.getFile(),
                     supportFileUpload.getNameFile(), supportFileUpload.getDataCaricamento(), supportFileUpload.getHashtag());
-            FilesHelper.saveDelayed(newFile);
+            FilesHelper.saveDelayed(nuovoFile);
 
-            String mailNotifica = MailAssistant.sendNotifica(supportFileUpload, usernameUpl, newFile.getId());
+            String mailNotifica = MailAssistant.sendNotifica(supportFileUpload, usernameUpl, nuovoFile.getId());
             if (mailNotifica.contains("ERR"))
                 throw new MyException(mailNotifica);
             if (FixedVariables.debug)
@@ -145,16 +163,25 @@ public class FilesManager {
 
             return Response
                     .status(Response.Status.OK)
-                    .entity(newFile.getId())
+                    .entity(nuovoFile.getId())
                     .build();
 
-        } catch (MyException e) {
+        } catch (Exception e) {
             if (FixedVariables.debug) System.out.println(e.getMessage() + "\n");
             return Response.status(Response.Status.BAD_REQUEST).entity("ERR - " + e.getMessage()).build();
         }
     }
 
 
+    /**
+     * Web Service che espone la possibilità di eliminare un file.
+     *
+     * @param fileId l'id del file da cancellare.
+     * @return una Response con un messaggio di conferma se va tutto a buon fine.
+     *  Altrimenti se non trova il file ritorna un NOT_FOUND
+     *  invece se non è l'uploader che l'ha cancellato ritorna una BAD_REQUEST,
+     *  entrambe avranno un messaggio allegato con una descrizione dell'errore.
+     */
     @Path("/delete/{fileId}")
     @DELETE
     @Consumes(MediaType.APPLICATION_JSON)
@@ -162,7 +189,7 @@ public class FilesManager {
         try {
             Files file = FilesHelper.getById(Files.class, fileId);
             if (file == null || file.getFile() == null)
-                throw new MyException("File da eliminare inesistente!");
+                return Response.status(Response.Status.NOT_FOUND).entity("ERR - File da eliminare inesistente!").build();
 
             String token = JWTAssistant.getTokenJWTFromRequest(request);
             String usernameFromJWT = JWTAssistant.getUsernameFromJWT(token);
@@ -175,9 +202,9 @@ public class FilesManager {
                     .status(Response.Status.OK)
                     .entity("delete file " + fileId + " completed")
                     .build();
-        } catch (MyException e) {
+        } catch (Exception e) {
             if (FixedVariables.debug) System.out.println(e.getMessage() + "\n");
-            return Response.status(Response.Status.NOT_FOUND).entity("ERR - " + e.getMessage()).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("ERR - " + e.getMessage()).build();
         }
     }
 
