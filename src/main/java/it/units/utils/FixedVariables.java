@@ -8,7 +8,7 @@ public class FixedVariables {
     public static final String HOMEPAGE = "http://localhost:8080/";
     //TODO: da aggiornare l'home page
     // TODO: decidere se mettere anche l'indirizzo per il download
-    public static final String BASE_IND_FILES = HOMEPAGE + "api/files/upload";
+    public static final String BASE_IND_DIRECT_DOWNLOAD_FILES = HOMEPAGE + "api/files/downloadDirect";
 
     public static final boolean debug = true;
 }

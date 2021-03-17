@@ -74,6 +74,7 @@
         <filter-name>ConsumerFilter</filter-name>
         <url-pattern>/api/list/uploaders</url-pattern>
         <url-pattern>/api/list/filesConsumer</url-pattern>
+        <url-pattern>/api/files/download/*</url-pattern>
     </filter-mapping>
     <!-- Fine filtri -->
 

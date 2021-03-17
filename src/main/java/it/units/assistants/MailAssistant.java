@@ -53,10 +53,11 @@ public class MailAssistant {
         return sendMail(usernameUpl + "@progmarchetto.appspotmail.com", "Uploader " + usernameUpl,
                 attore.getEmail(), attore.getName(),
                 "Creazione account " + attore.getRole(),
-                "Buongiorno, è stato creato un account con la sua mail.\n "
-                        + "Le credenziali sono: \n " +
+                "Buongiorno, è stato creato un account con la sua mail.\n " +
+                        "Le credenziali sono: \n " +
                         "Username: " + attore.getUsername() + "\n" +
                         "Password: " + passwordProvvisoria + "\n" +
+                        "Le altre informazioni inserite: \n " +
                         "Nome: " + attore.getName() + "\n" +
                         "Email: " + attore.getEmail() + "\n" +
                         "\n Se vuole andare sul nostro sito acceda a: " + FixedVariables.HOMEPAGE + "\n" +
@@ -67,7 +68,7 @@ public class MailAssistant {
 
     public static String sendNotifica(SupportFileUpload supportFileUpload, String usernameUpl, String fileID) {
 
-        String indFile = FixedVariables.BASE_IND_FILES + "/" + fileID;
+        String indFile = FixedVariables.BASE_IND_DIRECT_DOWNLOAD_FILES + "/" + fileID + "/" + TokenDownloadAssistant.creaTokenDownload(fileID);
         Attore uploader = AttoreHelper.getById(Attore.class, usernameUpl);
         if (uploader==null)
             return "ERR: uploader non trovato";
