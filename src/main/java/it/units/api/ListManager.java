@@ -1,14 +1,16 @@
 package it.units.api;
 
+import it.units.assistants.JWTAssistant;
 import it.units.assistants.ListAssistant;
 import it.units.entities.proxies.AttoreInfo;
 import it.units.entities.proxies.FilesInfo;
 import it.units.entities.storage.Attore;
+import it.units.entities.storage.Files;
 import it.units.entities.support.FromTo;
 import it.units.entities.support.ResumeForAdmin;
 import it.units.persistance.AttoreHelper;
+import it.units.persistance.FilesHelper;
 import it.units.utils.FixedVariables;
-import it.units.assistants.JWTAssistant;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,11 +34,19 @@ public class ListManager {
     @Context
     private HttpServletResponse response;
 
-/*
-* https://stackoverflow.com/questions/47327162/messagebodywriter-not-found-for-media-type-application-xml
-* The idea of GenericEntity
-* */
-    //---------CONSUMER-PAGE----------
+    /*
+     * https://stackoverflow.com/questions/47327162/messagebodywriter-not-found-for-media-type-application-xml
+     * Per risolvere il problema delle liste nelle Response da trasformare in json si è utilizzato il GenericEntity.
+    */
+
+
+    /**
+     * Web Service che espone la possibilità ad un consumer autenticato di reperire
+     * la lista degli uploader (con le loro informazioni) che gli hanno inviato qualche file.
+     *
+     * @return una Response contenente una lista di uploader con le loro informazioni.
+     * Nel caso si presentassero errori sarebbe ritornata un INTERNAL_SERVER_ERROR.
+     */
     @GET
     @Path("/uploaders")
     @Produces(MediaType.APPLICATION_JSON)
@@ -45,15 +55,16 @@ public class ListManager {
             List<Attore> uploadersList = new ArrayList<>();
             String token = JWTAssistant.getTokenJWTFromRequest(request);
             String consumer = JWTAssistant.getUsernameFromJWT(token);
-            List<FilesInfo> filesConsumer = ListAssistant.listaInfoFilesConsumer(consumer);
-            for (FilesInfo f : filesConsumer) {
-                Attore a = AttoreHelper.getById(Attore.class, f.getUsernameUpl());
+            List<Files> filesConsumer = FilesHelper.listaFilesConsumer(consumer);
+            for (Files file : filesConsumer) {
+                Attore a = AttoreHelper.getById(Attore.class, file.getUsernameUpl());
                 if (!uploadersList.contains(a))
                     uploadersList.add(a);
             }
             return Response
                     .status(Response.Status.OK)
-                    .entity(new GenericEntity<List<AttoreInfo>> (ListAssistant.getAttoreInfoList(uploadersList)) {})
+                    .entity(new GenericEntity<List<AttoreInfo>>(ListAssistant.getAttoreInfoList(uploadersList)) {
+                    })
                     .build();
         } catch (Exception e) {
             if (FixedVariables.debug) System.out.println(e.getMessage() + "\n");
@@ -61,6 +72,15 @@ public class ListManager {
         }
     }
 
+
+    /**
+     * Web Service che espone la possibilità ad un consumer autenticato di reperire
+     * la lista delle informazioni dei file che gli sono stati inviati.
+     *
+     * @return una Response contenente la lista delle informazioni dei file che sono
+     *  stati inviati al consumer autenticato.
+     * Nel caso si presentassero errori sarebbe ritornata un INTERNAL_SERVER_ERROR.
+     */
     @GET
     @Path("/filesConsumer")
     @Produces(MediaType.APPLICATION_JSON)
@@ -70,17 +90,22 @@ public class ListManager {
             String consumer = JWTAssistant.getUsernameFromJWT(token);
             return Response
                     .status(Response.Status.OK)
-                    .entity(new GenericEntity<List<FilesInfo>> (ListAssistant.listaInfoFilesConsumer(consumer)) {})
+                    .entity(new GenericEntity<List<FilesInfo>>(ListAssistant.listaInfoFilesConsumer(consumer)) {
+                    })
                     .build();
         } catch (Exception e) {
             if (FixedVariables.debug) System.out.println(e.getMessage() + "\n");
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
-//---------END CONSUMER-PAGE----------
 
-
-    //---------UPLOADER-PAGE----------
+    /**
+     * Web Service che espone la possibilità ad un uploader autenticato di reperire
+     * la lista di tutti i consumer.
+     *
+     * @return una Response contenente una lista di consumer con le loro informazioni.
+     * Nel caso si presentassero errori sarebbe ritornata un INTERNAL_SERVER_ERROR.
+     */
     @GET
     @Path("/consumers")
     @Produces(MediaType.APPLICATION_JSON)
@@ -88,7 +113,8 @@ public class ListManager {
         try {
             return Response
                     .status(Response.Status.OK)
-                    .entity(new GenericEntity<List<AttoreInfo>> (ListAssistant.ListaInfoAttoriRuolo(FixedVariables.CONSUMER)) {})
+                    .entity(new GenericEntity<List<AttoreInfo>>(ListAssistant.ListaInfoAttoriRuolo(FixedVariables.CONSUMER)) {
+                    })
                     .build();
         } catch (Exception e) {
             if (FixedVariables.debug) System.out.println(e.getMessage() + "\n");
@@ -96,6 +122,14 @@ public class ListManager {
         }
     }
 
+    /**
+     * Web Service che espone la possibilità ad un uploader autenticato di reperire
+     * la lista delle informazioni dei file che ha caricato (e che non ha eliminato).
+     *
+     * @return una Response contenente la lista delle informazioni dei file che sono
+     *  stati caricati dall'uploader autenticato.
+     * Nel caso si presentassero errori sarebbe ritornata un INTERNAL_SERVER_ERROR.
+     */
     @GET
     @Path("/filesUploader")
     @Produces(MediaType.APPLICATION_JSON)
@@ -105,17 +139,25 @@ public class ListManager {
             String uploader = JWTAssistant.getUsernameFromJWT(token);
             return Response
                     .status(Response.Status.OK)
-                    .entity(new GenericEntity<List<FilesInfo>> (ListAssistant.listaInfoFilesUploader(uploader)) {})
+                    .entity(new GenericEntity<List<FilesInfo>>(ListAssistant.listaInfoFilesUploader(uploader)) {
+                    })
                     .build();
         } catch (Exception e) {
             if (FixedVariables.debug) System.out.println(e.getMessage() + "\n");
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
-//---------END UPLOADER-PAGE----------
 
-
-    //---------ADMINISTRATOR-PAGE----------
+    /**
+     * Web Service che espone la possibilità ad un administrator autenticato di reperire
+     *  un resoconto in cui per ogni uploader vengono allegate le sue informazioni,
+     *  il numero di file caricati e il numero di consumer destinatari distinti in un certo
+     *  lasso di tempo indicato nei parametri di ingresso.
+     *
+     * @param date contiene la data di inizio e la data di fine del resoconto.
+     * @return una Response con il resoconto per il periodo selezionato.
+     *  Nel caso si presentassero errori sarebbe ritornata un INTERNAL_SERVER_ERROR.
+     */
     @POST
     @Path("/resumeForAdmin")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -163,7 +205,8 @@ public class ListManager {
 
             return Response
                     .status(Response.Status.OK)
-                    .entity(new GenericEntity<List<ResumeForAdmin>> (resoconto) {})
+                    .entity(new GenericEntity<List<ResumeForAdmin>>(resoconto) {
+                    })
                     .build();
         } catch (Exception e) {
             if (FixedVariables.debug) System.out.println(e.getMessage() + "\n");
@@ -171,6 +214,13 @@ public class ListManager {
         }
     }
 
+    /**
+     * Web Service che espone la possibilità ad un administrator autenticato di reperire
+     *  la lista di tutti gli amministratori presenti sulla piattaforma.
+     *
+     * @return una Response con la lista degli amministratori.
+     *  Nel caso si presentassero errori sarebbe ritornata un INTERNAL_SERVER_ERROR.
+     */
     @GET
     @Path("/administrators")
     @Produces(MediaType.APPLICATION_JSON)
@@ -178,13 +228,13 @@ public class ListManager {
         try {
             return Response
                     .status(Response.Status.OK)
-                    .entity(new GenericEntity<List<AttoreInfo>> (ListAssistant.ListaInfoAttoriRuolo(FixedVariables.ADMINISTRATOR)) {})
+                    .entity(new GenericEntity<List<AttoreInfo>>(ListAssistant.ListaInfoAttoriRuolo(FixedVariables.ADMINISTRATOR)) {
+                    })
                     .build();
         } catch (Exception e) {
             if (FixedVariables.debug) System.out.println(e.getMessage() + "\n");
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
-//---------END ADMINISTRATOR-PAGE----------
 
 }
