@@ -26,9 +26,9 @@ public class DatiDefault implements ServletContextListener {
             ////////////////////////////////////
             //TODO: dati di prova da rimuovere
             ////////////////////////////////////
-                creaAttore("upl1","PrimoUploader",FixedVariables.UPLOADER,logoUpl1);
+                creaAttore("upl1","Banca Paperopoli",FixedVariables.UPLOADER,logoUpl1);
 
-                creaAttore("upl2","SecondoUploader",FixedVariables.UPLOADER,logoUpl2);
+                creaAttore("upl2","Assicurazione Duemila&Crediti",FixedVariables.UPLOADER,logoUpl2);
 
                 creaAttore("PLNPRN60D01F376W","Paperino",FixedVariables.CONSUMER,"");
 

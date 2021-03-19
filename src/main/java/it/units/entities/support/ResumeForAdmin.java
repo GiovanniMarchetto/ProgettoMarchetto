@@ -3,11 +3,11 @@ package it.units.entities.support;
 
 public class ResumeForAdmin {
 
-    private String uploader;
+    private String username;
 
-    private String nameUploader;
+    private String name;
 
-    private String emailUploader;
+    private String email;
 
     private int numDocCaricati;
 
@@ -17,35 +17,35 @@ public class ResumeForAdmin {
     }
 
     public ResumeForAdmin(String uploader, String nameUploader, String emailUploader, int numDocCaricati, int numConsDiversi) {
-        this.uploader = uploader;
-        this.nameUploader = nameUploader;
-        this.emailUploader = emailUploader;
+        this.username = uploader;
+        this.name = nameUploader;
+        this.email = emailUploader;
         this.numDocCaricati = numDocCaricati;
         this.numConsDiversi = numConsDiversi;
     }
 
-    public String getUploader() {
-        return uploader;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUploader(String uploader) {
-        this.uploader = uploader;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public String getNameUploader() {
-        return nameUploader;
+    public String getName() {
+        return name;
     }
 
-    public void setNameUploader(String nameUploader) {
-        this.nameUploader = nameUploader;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getEmailUploader() {
-        return emailUploader;
+    public String getEmail() {
+        return email;
     }
 
-    public void setEmailUploader(String emailUploader) {
-        this.emailUploader = emailUploader;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public int getNumDocCaricati() {
