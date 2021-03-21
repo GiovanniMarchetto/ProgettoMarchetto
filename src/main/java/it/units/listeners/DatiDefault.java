@@ -33,25 +33,25 @@ public class DatiDefault implements ServletContextListener {
                 creaAttore("PLNPRN60D01F376W","Paperino",FixedVariables.CONSUMER,"");
 
                 creaAttore("MRABRS94S18G964G","Mario",FixedVariables.CONSUMER,"");
-
-                creaAttore("PCHPNC88L05E473A","Peach",FixedVariables.CONSUMER,"");
-
-                creaAttore("YMURLT84E17H294Q","Yuma",FixedVariables.CONSUMER,"");
+//
+//                creaAttore("PCHPNC88L05E473A","Peach",FixedVariables.CONSUMER,"");
+//
+//                creaAttore("YMURLT84E17H294Q","Yuma",FixedVariables.CONSUMER,"");
 
                 creaFile("upl1", "PLNPRN60D01F376W", "QmVsbGE=",
                         "doc1.txt", UtilsRest.getDataString(), "bello");
 
-                creaFile("upl1", "PLNPRN60D01F376W", "QnJ1dHRh",
-                        "doc2.txt", UtilsRest.getDataString(30), "brutto");
-
-                creaFile("upl2", "PLNPRN60D01F376W", "U3RyaW5nYSBjYXR0aXZh",
-                        "doc4.txt", UtilsRest.getDataString(100), "cattivo");
-
-                creaFile("upl1", "YMURLT84E17H294Q", "QmVsbGE=",
-                        "doc3.txt", UtilsRest.getDataString(15), "bello");
-
-                creaFile("upl1", "MRABRS94S18G964G", "U3RyaW5nYSBjYXR0aXZh",
-                        "doc5.txt", UtilsRest.getDataString(10), "cattivo");
+//                creaFile("upl1", "PLNPRN60D01F376W", "QnJ1dHRh",
+//                        "doc2.txt", UtilsRest.getDataString(30), "brutto");
+//
+//                creaFile("upl2", "PLNPRN60D01F376W", "U3RyaW5nYSBjYXR0aXZh",
+//                        "doc4.txt", UtilsRest.getDataString(100), "cattivo");
+//
+//                creaFile("upl1", "YMURLT84E17H294Q", "QmVsbGE=",
+//                        "doc3.txt", UtilsRest.getDataString(15), "bello");
+//
+//                creaFile("upl1", "MRABRS94S18G964G", "U3RyaW5nYSBjYXR0aXZh",
+//                        "doc5.txt", UtilsRest.getDataString(10), "cattivo");
             }
         });
     }

@@ -50,7 +50,7 @@ public class MailAssistant {
     }
 
     public static String sendMailCreazioneAttore(Attore attore, String passwordProvvisoria, String usernameUpl) {
-        return sendMail(usernameUpl + "@progmarchetto.appspotmail.com", "Uploader " + usernameUpl,
+        return sendMail(usernameUpl + "@progettomarchetto.appspotmail.com", "Uploader " + usernameUpl,
                 attore.getEmail(), attore.getName(),
                 "Creazione account " + attore.getRole(),
                 "Buongiorno, è stato creato un account con la sua mail.\n " +
@@ -73,10 +73,10 @@ public class MailAssistant {
         if (uploader==null)
             return "ERR: uploader non trovato";
 
-        return sendMail(usernameUpl + "@progmarchetto.appspotmail.com", "Uploader " + usernameUpl,
+        return sendMail(usernameUpl + "@progettomarchetto.appspotmail.com", "Uploader " + usernameUpl,
                 supportFileUpload.getEmailCons(), supportFileUpload.getNameCons(),
                 "Nuovo file caricato",
-                "È statocaricato un nuovo file da parte di " + uploader.getName() + ".\n" +
+                "È stato caricato un nuovo file da parte di " + uploader.getName() + ".\n" +
                         "Il nome del file caricato è: " + supportFileUpload.getNameFile() + ".\n" +
                         "\n Se vuole andare sul nostro sito acceda a: " + FixedVariables.HOMEPAGE + "\n" +
                         "\n Se vuole scaricare direttamente il file: " + indFile + "\n"
