@@ -1,19 +1,13 @@
 package it.units.entities.proxies;
 
-import com.googlecode.objectify.annotation.Entity;
-import com.googlecode.objectify.annotation.Id;
-import com.googlecode.objectify.annotation.Index;
 import it.units.entities.storage.Files;
 
-@Entity
 public class FilesInfo {
-    @Id
+
     private String id;
 
-    @Index
     private String usernameUpl;
 
-    @Index
     private String usernameCons;
 
     private String name;

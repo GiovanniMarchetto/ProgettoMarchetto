@@ -70,7 +70,7 @@ public class MailAssistant {
 
         String indFile = FixedVariables.BASE_IND_DIRECT_DOWNLOAD_FILES + "/" + fileID + "/" + TokenDownloadAssistant.creaTokenDownload(fileID);
         Attore uploader = AttoreHelper.getById(Attore.class, usernameUpl);
-        if (uploader==null)
+        if (uploader == null)
             return "ERR: uploader non trovato";
 
         return sendMail(usernameUpl + "@progettomarchetto.appspotmail.com", "Uploader " + usernameUpl,

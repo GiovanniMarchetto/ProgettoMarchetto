@@ -43,8 +43,8 @@ public class PasswordAssistant {
         }
     }
 
-    public static boolean verifyPassword(String pswInput, String pswSaved, String salt) {
+    public static boolean isPasswordWrong(String pswInput, String pswSaved, String salt) {
         String pswInputHash = hashPassword(pswInput, salt);
-        return pswInputHash != null && pswInputHash.equals(pswSaved);
+        return pswInputHash == null || !pswInputHash.equals(pswSaved);
     }
 }

@@ -36,7 +36,7 @@ public class UtilsRest {
 
     public static String getDataString(long giorniAntecedenti) {
         LocalDateTime dataCorrente = LocalDateTime.now();
-        LocalDateTime dataFinale =dataCorrente.minusDays(giorniAntecedenti);
+        LocalDateTime dataFinale = dataCorrente.minusDays(giorniAntecedenti);
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return dateTimeFormatter.format(dataFinale);
     }

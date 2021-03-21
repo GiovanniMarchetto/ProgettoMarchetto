@@ -37,7 +37,7 @@ public class ListManager {
     /*
      * https://stackoverflow.com/questions/47327162/messagebodywriter-not-found-for-media-type-application-xml
      * Per risolvere il problema delle liste nelle Response da trasformare in json si è utilizzato il GenericEntity.
-    */
+     */
 
 
     /**
@@ -78,7 +78,7 @@ public class ListManager {
      * la lista delle informazioni dei file che gli sono stati inviati.
      *
      * @return una Response contenente la lista delle informazioni dei file che sono
-     *  stati inviati al consumer autenticato.
+     * stati inviati al consumer autenticato.
      * Nel caso si presentassero errori sarebbe ritornata un INTERNAL_SERVER_ERROR.
      */
     @GET
@@ -127,7 +127,7 @@ public class ListManager {
      * la lista delle informazioni dei file che ha caricato (e che non ha eliminato).
      *
      * @return una Response contenente la lista delle informazioni dei file che sono
-     *  stati caricati dall'uploader autenticato.
+     * stati caricati dall'uploader autenticato.
      * Nel caso si presentassero errori sarebbe ritornata un INTERNAL_SERVER_ERROR.
      */
     @GET
@@ -150,13 +150,13 @@ public class ListManager {
 
     /**
      * Web Service che espone la possibilità ad un administrator autenticato di reperire
-     *  un resoconto in cui per ogni uploader vengono allegate le sue informazioni,
-     *  il numero di file caricati e il numero di consumer destinatari distinti in un certo
-     *  lasso di tempo indicato nei parametri di ingresso.
+     * un resoconto in cui per ogni uploader vengono allegate le sue informazioni,
+     * il numero di file caricati e il numero di consumer destinatari distinti in un certo
+     * lasso di tempo indicato nei parametri di ingresso.
      *
      * @param date contiene la data di inizio e la data di fine del resoconto.
      * @return una Response con il resoconto per il periodo selezionato.
-     *  Nel caso si presentassero errori sarebbe ritornata un INTERNAL_SERVER_ERROR.
+     * Nel caso si presentassero errori sarebbe ritornata un INTERNAL_SERVER_ERROR.
      */
     @POST
     @Path("/resumeForAdmin")
@@ -216,10 +216,10 @@ public class ListManager {
 
     /**
      * Web Service che espone la possibilità ad un administrator autenticato di reperire
-     *  la lista di tutti gli amministratori presenti sulla piattaforma.
+     * la lista di tutti gli amministratori presenti sulla piattaforma.
      *
      * @return una Response con la lista degli amministratori.
-     *  Nel caso si presentassero errori sarebbe ritornata un INTERNAL_SERVER_ERROR.
+     * Nel caso si presentassero errori sarebbe ritornata un INTERNAL_SERVER_ERROR.
      */
     @GET
     @Path("/administrators")

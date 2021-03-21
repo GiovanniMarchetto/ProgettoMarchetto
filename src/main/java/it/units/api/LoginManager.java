@@ -47,7 +47,7 @@ public class LoginManager {
             if (accountChiesto == null)
                 throw new MyException("Username errato! (inesistente)");
 
-            if (!PasswordAssistant.verifyPassword(attoreLogin.getPassword(), accountChiesto.getPassword(), accountChiesto.getSalt()))
+            if (PasswordAssistant.isPasswordWrong(attoreLogin.getPassword(), accountChiesto.getPassword(), accountChiesto.getSalt()))
                 throw new MyException("Password errata!");
 
             if (FixedVariables.debug)

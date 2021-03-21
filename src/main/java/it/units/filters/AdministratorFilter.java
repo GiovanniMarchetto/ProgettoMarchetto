@@ -6,7 +6,6 @@ import it.units.utils.FixedVariables;
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 
 @WebFilter

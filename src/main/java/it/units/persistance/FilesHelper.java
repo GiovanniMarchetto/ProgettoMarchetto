@@ -15,13 +15,13 @@ public class FilesHelper extends AbstractHelper {
 
     public static List<Files> listaFilesConsumer(String usernameCons) {
         List<Files> listaFilesConsumer = ofy().load().type(Files.class).filter("usernameCons", usernameCons).list();
-        listaFilesConsumer.removeIf(file -> file.getFile()==null);
+        listaFilesConsumer.removeIf(file -> file.getFile() == null);
         return listaFilesConsumer;
     }
 
     public static List<Files> listaFilesUploader(String usernameUploader) {
-        List<Files> listaFilesUploader = ofy().load().type(Files.class).filter("usernameUpl", usernameUploader).list();;
-        listaFilesUploader.removeIf(file -> file.getFile()==null);
+        List<Files> listaFilesUploader = ofy().load().type(Files.class).filter("usernameUpl", usernameUploader).list();
+        listaFilesUploader.removeIf(file -> file.getFile() == null);
         return listaFilesUploader;
     }
 

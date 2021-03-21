@@ -57,7 +57,7 @@ public class FilesManager {
      * Web Service che espone la possibilità di fare il download di un file dal sito.
      * Se mancanti aggiorna la data di visualizzazione e l'indirizzo IP richiedente.
      *
-     * @param fileId l'id del file da scaricare
+     * @param fileId        l'id del file da scaricare
      * @param tokenDownload il token jwt per la verifica
      * @return ritorna una Response con il file in formato octet_stream (il browser poi si occuperà di come salvarlo).
      * Se il token non è valido ritorna una Response BAD_REQUEST, oppure se non trova il file ritorna una Response NOT_FOUND.
@@ -66,7 +66,7 @@ public class FilesManager {
     @Path("/downloadDirect/{fileId}/{tokenDownload}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response downloadFileFromLink(@PathParam("fileId") String fileId, @PathParam("tokenDownload") String tokenDownload) {
-        if (!TokenDownloadAssistant.verificaTokenDownload(tokenDownload,fileId))
+        if (!TokenDownloadAssistant.verificaTokenDownload(tokenDownload, fileId))
             return Response.status(Response.Status.BAD_REQUEST).entity("ERR - Token errato").build();
         return downloadFile(fileId);
     }
@@ -74,6 +74,7 @@ public class FilesManager {
     /**
      * Metodo che si occupa della procedura di download.
      * Se mancanti aggiorna la data di visualizzazione e l'indirizzo IP richiedente.
+     *
      * @param id l'identificativo del file da scaricare
      * @return una Response con il file oppure NOT_FOUND.
      */
@@ -99,9 +100,9 @@ public class FilesManager {
 
     /**
      * Web Service che espone la possibilità (ad un uploader) di caricare un file.
-     *
+     * <p>
      * Se il consumer a cui è diretto non esiste allora lo crea e
-     *  gli manda una mail con i dati di accesso (password generata casualmente).
+     * gli manda una mail con i dati di accesso (password generata casualmente).
      * Dopo aver caricato il file invia una mail di notifica (organizzata come da specifiche).
      *
      * @param supportFileUpload entità di supporto che prevede in entrata:
@@ -112,7 +113,7 @@ public class FilesManager {
      *                          - il nome del consumer (utilizzato solo se è un nuovo consumer)
      *                          - email del consumer (utilizzato solo se è un nuovo consumer)
      * @return una Response con un messaggio di conferma se va tutto a buon fine.
-     *  Altrimenti ritorna una BAD_REQUEST con in allegato una stringa con la spiegazione dell'errore.
+     * Altrimenti ritorna una BAD_REQUEST con in allegato una stringa con la spiegazione dell'errore.
      */
     @POST
     @Path("/upload")
@@ -178,9 +179,9 @@ public class FilesManager {
      *
      * @param fileId l'id del file da cancellare.
      * @return una Response con un messaggio di conferma se va tutto a buon fine.
-     *  Altrimenti se non trova il file ritorna un NOT_FOUND
-     *  invece se non è l'uploader che l'ha cancellato ritorna una BAD_REQUEST,
-     *  entrambe avranno un messaggio allegato con una descrizione dell'errore.
+     * Altrimenti se non trova il file ritorna un NOT_FOUND
+     * invece se non è l'uploader che l'ha cancellato ritorna una BAD_REQUEST,
+     * entrambe avranno un messaggio allegato con una descrizione dell'errore.
      */
     @Path("/delete/{fileId}")
     @DELETE

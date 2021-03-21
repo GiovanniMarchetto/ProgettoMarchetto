@@ -33,10 +33,10 @@ public class AttoriManager {
      * Web Service che espone la possibilità di registrare un attore nel sistema.
      * Da specifiche:
      * - solo gli amministratori possono registrare altri amministratori e uploader.
-     *
+     * <p>
      * Siccome i consumer devono poter registrarsi al sistema,
-     *  non c'è un filtro esterno ma nel caso non si possa si torna una risposta negativa.
-     *  Di conseguenza chiunque può registrare un consumer nel sistema.
+     * non c'è un filtro esterno ma nel caso non si possa si torna una risposta negativa.
+     * Di conseguenza chiunque può registrare un consumer nel sistema.
      *
      * @param attore l'attore da registrare nel sistema, se non è un uploader il logo viene ignorato.
      * @return ritorna una Response di conferma o BAD_REQUEST se si rileva un errore,
@@ -140,7 +140,7 @@ public class AttoriManager {
                 modifiche.set(true);
             }
             if (!attoreModificato.getPassword().equals("")
-                    && !PasswordAssistant.verifyPassword(attoreModificato.getPassword(), attoreDatabase.getPassword(), attoreDatabase.getSalt())) {
+                    && PasswordAssistant.isPasswordWrong(attoreModificato.getPassword(), attoreDatabase.getPassword(), attoreDatabase.getSalt())) {
                 attoreDatabase.setPassword(attoreModificato.getPassword());
                 modifiche.set(true);
                 modifichePassword.set(true);

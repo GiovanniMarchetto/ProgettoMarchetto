@@ -12,7 +12,8 @@ public class AttoreInfo {
 
     private String logo;
 
-    public AttoreInfo() {}
+    public AttoreInfo() {
+    }
 
     public AttoreInfo(Attore attore) {
         this.username = attore.getUsername();

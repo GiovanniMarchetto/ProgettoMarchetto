@@ -18,9 +18,9 @@ public class ConsumerFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        if (FilterAssistant.filtroPerRuolo(servletRequest, FixedVariables.CONSUMER,true))
+        if (FilterAssistant.filtroPerRuolo(servletRequest, FixedVariables.CONSUMER, true))
             filterChain.doFilter(servletRequest, servletResponse);
-        else{
+        else {
             HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
             httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
         }
