@@ -140,8 +140,6 @@ public class FilesManager {
                 AttoreHelper.saveDelayed(nuovoConsumer, true);
 
                 String mailCreazioneAttore = MailAssistant.sendMailCreazioneAttore(nuovoConsumer, passwordProvvisoria, usernameUpl);
-                if (mailCreazioneAttore.contains("ERR"))
-                    throw new MyException(mailCreazioneAttore);
 
                 if (FixedVariables.debug)
                     System.out.println(mailCreazioneAttore);
@@ -156,8 +154,6 @@ public class FilesManager {
             FilesHelper.saveDelayed(nuovoFile);
 
             String mailNotifica = MailAssistant.sendNotifica(supportFileUpload, usernameUpl, nuovoFile.getId());
-            if (mailNotifica.contains("ERR"))
-                throw new MyException(mailNotifica);
             if (FixedVariables.debug)
                 System.out.println(mailNotifica);
 

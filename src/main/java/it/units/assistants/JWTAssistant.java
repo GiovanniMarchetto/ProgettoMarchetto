@@ -9,6 +9,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import it.units.utils.FixedVariables;
+import it.units.utils.MyException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Calendar;
@@ -36,7 +37,7 @@ public class JWTAssistant {
             "IeDbLNrfiJUfalALpcwK2";
     private static final Algorithm algoritmo = Algorithm.HMAC256(secret);
 
-    public static String creaJWT(String username, String ruolo, String name, String email) {
+    public static String creaJWT(String username, String ruolo, String name, String email) throws MyException {
         try {
             Date dataCorrente = new Date();
             Calendar dataScadenzaCalendar = Calendar.getInstance();
@@ -60,13 +61,13 @@ public class JWTAssistant {
             return token;
         } catch (JWTCreationException exception) {
             System.out.println(exception.getMessage());
-            return "ERR eccezione nella creazione del JWT";
+            throw new MyException("Errore nella creazione del jwt");
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return "ERR altra eccezione JWT";
+            throw new MyException("Eccezione generica durante la creazione del jwt");
         } catch (NoSuchMethodError e) {
             System.out.println(e.getMessage());
-            return "ERR JWT no such method";
+            throw new MyException("Non esiste il metodo per la creazione del jwt");
         }
     }
 

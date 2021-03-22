@@ -5,6 +5,7 @@ import com.googlecode.objectify.VoidWork;
 import it.units.entities.storage.Attore;
 import it.units.persistance.AttoreHelper;
 import it.units.utils.FixedVariables;
+import it.units.utils.MyException;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -22,7 +23,11 @@ public class DatiDefault implements ServletContextListener {
         ObjectifyService.run(new VoidWork() {
             public void vrun() {
                 Attore attore = new Attore("admin@prog.com", "26!@W&FQLKmb", "Admin", "marchetto.giovanni97@gmail.com", FixedVariables.ADMINISTRATOR, "");
-                AttoreHelper.saveDelayed(attore, true);
+                try {
+                    AttoreHelper.saveDelayed(attore, true);
+                } catch (MyException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

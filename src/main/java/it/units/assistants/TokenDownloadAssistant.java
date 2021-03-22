@@ -6,6 +6,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import it.units.utils.MyException;
 
 public class TokenDownloadAssistant {
 
@@ -27,20 +28,20 @@ public class TokenDownloadAssistant {
             "]cQ]AE8J&B+X)hD(tWvCdx:!+u7vm[4kS}EeTYa+d)czm5Uex*C(CTYW%!NRd]H..[3R)}*?=E#/$egU$k@V{,B*Tm;ZG/FdCr3[=Y";
     private static final Algorithm algoritmo = Algorithm.HMAC256(secret);
 
-    public static String creaTokenDownload(String fileId) {
+    public static String creaTokenDownload(String fileId) throws MyException {
         try {
             return JWT.create()
                     .withIssuer("Giovanni Marchetto").withSubject(fileId)
                     .sign(algoritmo);
         } catch (JWTCreationException exception) {
             System.out.println(exception.getMessage());
-            return "ERR eccezione nella creazione del JWT";
+            throw new MyException("Eccezione nella creazione del token per il download diretto");
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return "ERR altra eccezione JWT";
+            throw new MyException("Eccezione generica nella creazione del token per il download diretto");
         } catch (NoSuchMethodError e) {
             System.out.println(e.getMessage());
-            return "ERR JWT no such method";
+            throw new MyException("Non c'è il metodo per creare il token per il download diretto");
         }
     }
 

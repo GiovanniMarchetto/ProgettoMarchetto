@@ -4,6 +4,7 @@ import it.units.entities.storage.Attore;
 import it.units.entities.support.SupportFileUpload;
 import it.units.persistance.AttoreHelper;
 import it.units.utils.FixedVariables;
+import it.units.utils.MyException;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -18,7 +19,7 @@ import java.util.Properties;
 public class MailAssistant {
     public static String sendMail(String indirizzoFrom, String nomeFrom,
                                   String indirizzoTo, String nomeTo, String oggettoMail,
-                                  String testoMail, String responseSuccess) {
+                                  String testoMail, String responseSuccess) throws MyException {
         try {
             Properties props = new Properties();
             Session session = Session.getDefaultInstance(props, null);
@@ -36,20 +37,20 @@ public class MailAssistant {
 
         } catch (AddressException e) {
             System.out.println("Problema con indirizzo");
-            return "ERR - " + e.getMessage();
+            throw new MyException("Indirizzo immesso per la mail non valido");
         } catch (MessagingException e) {
             System.out.println("Problema con il messaggio");
-            return "ERR - " + e.getMessage();
+            throw new MyException("Messaggio immesso per la mail non valido");
         } catch (UnsupportedEncodingException e) {
             System.out.println("Problema con encoding");
-            return "ERR - " + e.getMessage();
+            throw new MyException("Encoding del messaggio non supportato");
         } catch (Exception e) {
-            System.out.println(e.getMessage() + "\n");
-            return "ERR - " + e.getMessage();
+            System.out.println(e.getMessage());
+            throw new MyException("Eccezione generica nella spedizione della mail");
         }
     }
 
-    public static String sendMailCreazioneAttore(Attore attore, String passwordProvvisoria, String usernameUpl) {
+    public static String sendMailCreazioneAttore(Attore attore, String passwordProvvisoria, String usernameUpl) throws MyException {
         return sendMail(usernameUpl + "@progettomarchetto.appspotmail.com", "Uploader " + usernameUpl,
                 attore.getEmail(), attore.getName(),
                 "Creazione account " + attore.getRole(),
@@ -66,12 +67,11 @@ public class MailAssistant {
         );
     }
 
-    public static String sendNotifica(SupportFileUpload supportFileUpload, String usernameUpl, String fileID) {
-
+    public static String sendNotifica(SupportFileUpload supportFileUpload, String usernameUpl, String fileID) throws MyException, NullPointerException {
         String indFile = FixedVariables.BASE_IND_DIRECT_DOWNLOAD_FILES + "/" + fileID + "/" + TokenDownloadAssistant.creaTokenDownload(fileID);
         Attore uploader = AttoreHelper.getById(Attore.class, usernameUpl);
         if (uploader == null)
-            return "ERR: uploader non trovato";
+            throw new NullPointerException("Uploader non trovato");
 
         return sendMail(usernameUpl + "@progettomarchetto.appspotmail.com", "Uploader " + usernameUpl,
                 supportFileUpload.getEmailCons(), supportFileUpload.getNameCons(),
