@@ -9,7 +9,10 @@ import java.util.Arrays;
 import java.util.Base64;
 
 public class PasswordAssistant {
-    //https://dev.to/awwsmm/how-to-encrypt-a-password-in-java-42dh
+    /*
+    * https://www.baeldung.com/java-password-hashing
+    * https://dev.to/awwsmm/how-to-encrypt-a-password-in-java-42dh
+    */
 
     private static final SecureRandom numeroCasuale = new SecureRandom();
     private static final int ITERATIONS = 65536;
@@ -17,7 +20,7 @@ public class PasswordAssistant {
     private static final String ALGORITHM = "PBKDF2WithHmacSHA512";
 
     public static String generateSalt() {
-        byte[] salt = new byte[16];//length];
+        byte[] salt = new byte[16];
         numeroCasuale.nextBytes(salt);
         return Base64.getEncoder().encodeToString(salt);
     }
