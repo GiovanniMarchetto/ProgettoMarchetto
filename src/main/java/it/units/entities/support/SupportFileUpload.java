@@ -1,6 +1,6 @@
 package it.units.entities.support;
 
-import it.units.utils.UtilsRest;
+import it.units.utils.UtilsMiscellaneous;
 
 public class SupportFileUpload {
 
@@ -27,7 +27,7 @@ public class SupportFileUpload {
         this.file = file;
         this.nameFile = nameFile;
         this.hashtag = hashtag;
-        this.dataCaricamento = UtilsRest.getDataString();
+        this.dataCaricamento = UtilsMiscellaneous.getDataString();
         this.usernameUpl = "";
         this.usernameCons = usernameCons;
         this.nameCons = nameCons;

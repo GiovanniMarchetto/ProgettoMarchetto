@@ -31,7 +31,8 @@ public class TokenDownloadAssistant {
     public static String creaTokenDownload(String fileId) throws MyException {
         try {
             return JWT.create()
-                    .withIssuer("Giovanni Marchetto").withSubject(fileId)
+                    .withIssuer("Giovanni Marchetto")
+                    .withSubject(fileId)
                     .sign(algoritmo);
         } catch (JWTCreationException exception) {
             System.out.println(exception.getMessage());

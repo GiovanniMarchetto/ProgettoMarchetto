@@ -10,7 +10,7 @@ import it.units.persistance.AttoreHelper;
 import it.units.persistance.FilesHelper;
 import it.units.utils.FixedVariables;
 import it.units.utils.MyException;
-import it.units.utils.UtilsRest;
+import it.units.utils.UtilsMiscellaneous;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -85,7 +85,7 @@ public class FilesManager {
             return Response.status(Response.Status.NOT_FOUND).entity("ERR - Il file richiesto non è presente nel database").build();
 
         if (fileDaScaricare.getDataVisualizzazione().equals("")) {
-            String dataVisualizzazione = UtilsRest.getDataString();
+            String dataVisualizzazione = UtilsMiscellaneous.getDataString();
             fileDaScaricare.setDataVisualizzazione(dataVisualizzazione);
             fileDaScaricare.setIndirizzoIP(request.getRemoteAddr());
 
@@ -122,13 +122,13 @@ public class FilesManager {
         try {
             String usernameUpl = JWTAssistant.getUsernameFromJWT(JWTAssistant.getTokenJWTFromRequest(request));
             supportFileUpload.setUsernameUpl(usernameUpl);
-            supportFileUpload.setDataCaricamento(UtilsRest.getDataString());
+            supportFileUpload.setDataCaricamento(UtilsMiscellaneous.getDataString());
 
             Attore attore = AttoreHelper.getById(Attore.class, supportFileUpload.getUsernameCons());
 
             if (attore == null) {
 
-                if (UtilsRest.isSyntaxUsernameWrong(supportFileUpload.getUsernameCons(), FixedVariables.CONSUMER))
+                if (UtilsMiscellaneous.isSyntaxUsernameWrong(supportFileUpload.getUsernameCons(), FixedVariables.CONSUMER))
                     throw new MyException("Username per il consumer non conforme alle regole.");
 
                 if (supportFileUpload.getEmailCons().equals("") || supportFileUpload.getNameCons().equals(""))
@@ -137,7 +137,7 @@ public class FilesManager {
                 String passwordProvvisoria = UUID.randomUUID().toString();
                 Attore nuovoConsumer = new Attore(supportFileUpload.getUsernameCons(), passwordProvvisoria,
                         supportFileUpload.getNameCons(), supportFileUpload.getEmailCons(), FixedVariables.CONSUMER, "");
-                AttoreHelper.saveDelayed(nuovoConsumer, true);
+                AttoreHelper.saveNow(nuovoConsumer, true);
 
                 String mailCreazioneAttore = MailAssistant.sendMailCreazioneAttore(nuovoConsumer, passwordProvvisoria, usernameUpl);
 

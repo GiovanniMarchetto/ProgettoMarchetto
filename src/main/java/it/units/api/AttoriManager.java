@@ -10,7 +10,7 @@ import it.units.persistance.AttoreHelper;
 import it.units.persistance.FilesHelper;
 import it.units.utils.FixedVariables;
 import it.units.utils.MyException;
-import it.units.utils.UtilsRest;
+import it.units.utils.UtilsMiscellaneous;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -49,7 +49,7 @@ public class AttoriManager {
     public Response registration(Attore attore) {
         try {
             if (FixedVariables.debug)
-                UtilsRest.stampaDatiPassati(attore, "registration");
+                UtilsMiscellaneous.stampaDatiPassati(attore, "registration");
 
             if (!attore.getRole().equals(FixedVariables.CONSUMER)) {
                 if (!FilterAssistant.filtroPerRuolo(request, FixedVariables.ADMINISTRATOR, true))
@@ -59,7 +59,7 @@ public class AttoriManager {
             if (AttoreHelper.getById(Attore.class, attore.getUsername()) != null)
                 throw new MyException("Username già esistente");
 
-            if (UtilsRest.isSyntaxUsernameWrong(attore.getUsername(), attore.getRole()))
+            if (UtilsMiscellaneous.isSyntaxUsernameWrong(attore.getUsername(), attore.getRole()))
                 throw new MyException("Username non conforme alle regole.");
 
             if (!attore.getRole().equals(FixedVariables.UPLOADER))
@@ -104,7 +104,7 @@ public class AttoriManager {
     public Response modificaInformazioni(Attore attoreModificato) {
         try {
             if (FixedVariables.debug)
-                UtilsRest.stampaDatiPassati(attoreModificato, "modifica attore");
+                UtilsMiscellaneous.stampaDatiPassati(attoreModificato, "modifica attore");
 
             String token = JWTAssistant.getTokenJWTFromRequest(request);
             String ruoloAttoreModifica = attoreModificato.getRole();
@@ -113,7 +113,7 @@ public class AttoriManager {
                 usernameAttoreModifica = JWTAssistant.getUsernameFromJWT(token);
             } else {
                 usernameAttoreModifica = attoreModificato.getUsername();
-                FilterAssistant.controlloPrivilegi(token, ruoloAttoreModifica);
+                UtilsMiscellaneous.controlloPrivilegi(token, ruoloAttoreModifica);
             }
 
             Attore attoreDatabase = AttoreHelper.getById(Attore.class, usernameAttoreModifica);

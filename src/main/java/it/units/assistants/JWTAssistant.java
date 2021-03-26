@@ -46,7 +46,7 @@ public class JWTAssistant {
             Date dataScadenza = dataScadenzaCalendar.getTime();
 
             String token = JWT.create()
-                    .withIssuer("marchetto")
+                    .withIssuer("Giovanni Marchetto")
                     .withSubject(username)
                     .withIssuedAt(dataCorrente)
                     .withExpiresAt(dataScadenza)
@@ -74,7 +74,7 @@ public class JWTAssistant {
     public static boolean verificaJWT(String token) {
         try {
             JWTVerifier verifier = JWT.require(algoritmo)
-                    .withIssuer("marchetto")
+                    .withIssuer("Giovanni Marchetto")
                     .build(); //Reusable verifier instance
             DecodedJWT jwt = verifier.verify(token);
             return jwt != null;

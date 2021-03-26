@@ -1,5 +1,6 @@
 package it.units.utils;
 
+import it.units.assistants.JWTAssistant;
 import it.units.entities.storage.Attore;
 
 import java.time.LocalDateTime;
@@ -7,13 +8,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class UtilsRest {
+public class UtilsMiscellaneous {
 
     public static boolean isSyntaxUsernameWrong(String username, String role) {
         Pattern pattern;
         switch (role) {
             case FixedVariables.ADMINISTRATOR:
-                pattern = Pattern.compile("[a-zA-Z0-9]+@[a-zA-Z0-9]+\\.[a-zA-Z]+");
+                pattern = Pattern.compile("^[a-zA-Z0-9.]+@[a-z]+\\.[a-z]+$");
                 break;
             case FixedVariables.UPLOADER:
                 pattern = Pattern.compile("^[a-zA-Z0-9]{4}$");
@@ -34,11 +35,21 @@ public class UtilsRest {
         return dateTimeFormatter.format(dataCorrente);
     }
 
-    public static String getDataString(long giorniAntecedenti) {
-        LocalDateTime dataCorrente = LocalDateTime.now();
-        LocalDateTime dataFinale = dataCorrente.minusDays(giorniAntecedenti);
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return dateTimeFormatter.format(dataFinale);
+    public static void controlloPrivilegi(String token, String role) throws MyException {
+        switch (JWTAssistant.getRoleFromJWT(token)) {
+            case FixedVariables.CONSUMER:
+                throw new MyException("Un consumer non può effettuare questa operazione.");
+            case FixedVariables.UPLOADER:
+                if (!role.equals(FixedVariables.CONSUMER))
+                    throw new MyException("Un uploader non può effettuare questa operazione.");
+                break;
+            case FixedVariables.ADMINISTRATOR:
+                if (role.equals(FixedVariables.CONSUMER))
+                    throw new MyException("Un amministratore non può agire sui consumer.");
+                break;
+            default:
+                throw new MyException("Ruolo mancante...");
+        }
     }
 
     public static void stampaDatiPassati(Attore attore, String azione) {
@@ -52,4 +63,5 @@ public class UtilsRest {
         System.out.println(" Logo: " + !attore.getLogo().isEmpty());
         System.out.println("----------------------------------------");
     }
+
 }

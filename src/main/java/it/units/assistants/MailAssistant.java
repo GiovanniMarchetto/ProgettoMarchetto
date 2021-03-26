@@ -50,8 +50,12 @@ public class MailAssistant {
         }
     }
 
-    public static String sendMailCreazioneAttore(Attore attore, String passwordProvvisoria, String usernameUpl) throws MyException {
-        return sendMail(usernameUpl + "@progettomarchetto.appspotmail.com", "Uploader " + usernameUpl,
+    public static String sendMailCreazioneAttore(Attore attore, String passwordProvvisoria, String usernameCreator) throws MyException, NullPointerException {
+        Attore attoreCreator = AttoreHelper.getById(Attore.class, usernameCreator);
+        if (attoreCreator == null)
+            throw new NullPointerException("Attore creante non trovato");
+
+        return sendMail(usernameCreator + "@progettomarchetto.appspotmail.com", attoreCreator.getName(),
                 attore.getEmail(), attore.getName(),
                 "Creazione account " + attore.getRole(),
                 "Buongiorno, è stato creato un account con la sua mail.\n " +
@@ -62,7 +66,8 @@ public class MailAssistant {
                         "Nome: " + attore.getName() + "\n" +
                         "Email: " + attore.getEmail() + "\n" +
                         "\n Se vuole andare sul nostro sito acceda a: " + FixedVariables.HOMEPAGE + "\n" +
-                        "\n Cordiali saluti.",
+                        "\n Cordiali saluti,\n" + attoreCreator.getName()
+                        + "\n\n\n\n Questa è una email automatica, non rispondere.",
                 "Creazione del consumer " + attore.getUsername() + " avvenuta. \n"
         );
     }
@@ -73,14 +78,15 @@ public class MailAssistant {
         if (uploader == null)
             throw new NullPointerException("Uploader non trovato");
 
-        return sendMail(usernameUpl + "@progettomarchetto.appspotmail.com", "Uploader " + usernameUpl,
+        return sendMail(usernameUpl + "@progettomarchetto.appspotmail.com", uploader.getName(),
                 supportFileUpload.getEmailCons(), supportFileUpload.getNameCons(),
                 "Nuovo file caricato",
                 "È stato caricato un nuovo file da parte di " + uploader.getName() + ".\n" +
                         "Il nome del file caricato è: " + supportFileUpload.getNameFile() + ".\n" +
                         "\n Se vuole andare sul nostro sito acceda a: " + FixedVariables.HOMEPAGE + "\n" +
                         "\n Se vuole scaricare direttamente il file: " + indFile + "\n"
-                        + "Cordiali saluti.",
+                        + "Cordiali saluti,\n" + uploader.getName()
+                        + "\n\n\n\n Questa è una email automatica, non rispondere.",
                 "Notifica inviata al consumer correttamente."
         );
     }

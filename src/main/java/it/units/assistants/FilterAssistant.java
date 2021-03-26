@@ -1,7 +1,6 @@
 package it.units.assistants;
 
 import it.units.utils.FixedVariables;
-import it.units.utils.MyException;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -42,20 +41,4 @@ public class FilterAssistant {
         }
     }
 
-    public static void controlloPrivilegi(String token, String role) throws MyException {
-        switch (JWTAssistant.getRoleFromJWT(token)) {
-            case FixedVariables.CONSUMER:
-                throw new MyException("Un consumer non può effettuare questa operazione.");
-            case FixedVariables.UPLOADER:
-                if (!role.equals(FixedVariables.CONSUMER))
-                    throw new MyException("Un uploader non può effettuare questa operazione.");
-                break;
-            case FixedVariables.ADMINISTRATOR:
-                if (role.equals(FixedVariables.CONSUMER))
-                    throw new MyException("Un amministratore non può agire sui consumer.");
-                break;
-            default:
-                throw new MyException("Ruolo mancante...");
-        }
-    }
 }

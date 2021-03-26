@@ -1,7 +1,7 @@
 package it.units.api;
 
 import it.units.assistants.JWTAssistant;
-import it.units.assistants.ListAssistant;
+import it.units.assistants.ListToProxiesAssistant;
 import it.units.entities.proxies.AttoreInfo;
 import it.units.entities.proxies.FilesInfo;
 import it.units.entities.storage.Attore;
@@ -63,7 +63,7 @@ public class ListManager {
             }
             return Response
                     .status(Response.Status.OK)
-                    .entity(new GenericEntity<List<AttoreInfo>>(ListAssistant.getAttoreInfoList(uploadersList)) {
+                    .entity(new GenericEntity<List<AttoreInfo>>(ListToProxiesAssistant.getAttoreInfoList(uploadersList)) {
                     })
                     .build();
         } catch (Exception e) {
@@ -90,7 +90,7 @@ public class ListManager {
             String consumer = JWTAssistant.getUsernameFromJWT(token);
             return Response
                     .status(Response.Status.OK)
-                    .entity(new GenericEntity<List<FilesInfo>>(ListAssistant.listaInfoFilesConsumer(consumer)) {
+                    .entity(new GenericEntity<List<FilesInfo>>(ListToProxiesAssistant.listaInfoFilesConsumer(consumer)) {
                     })
                     .build();
         } catch (Exception e) {
@@ -113,7 +113,7 @@ public class ListManager {
         try {
             return Response
                     .status(Response.Status.OK)
-                    .entity(new GenericEntity<List<AttoreInfo>>(ListAssistant.ListaInfoAttoriRuolo(FixedVariables.CONSUMER)) {
+                    .entity(new GenericEntity<List<AttoreInfo>>(ListToProxiesAssistant.ListaInfoAttoriRuolo(FixedVariables.CONSUMER)) {
                     })
                     .build();
         } catch (Exception e) {
@@ -139,7 +139,7 @@ public class ListManager {
             String uploader = JWTAssistant.getUsernameFromJWT(token);
             return Response
                     .status(Response.Status.OK)
-                    .entity(new GenericEntity<List<FilesInfo>>(ListAssistant.listaInfoFilesUploader(uploader)) {
+                    .entity(new GenericEntity<List<FilesInfo>>(ListToProxiesAssistant.listaInfoFilesUploader(uploader)) {
                     })
                     .build();
         } catch (Exception e) {
@@ -167,8 +167,8 @@ public class ListManager {
             Date fromDate = new SimpleDateFormat("yyyy-MM-dd").parse(date.getFrom());
             Date toDate = new SimpleDateFormat("yyyy-MM-dd").parse(date.getTo());
 
-            List<AttoreInfo> uploaders = ListAssistant.ListaInfoAttoriRuolo(FixedVariables.UPLOADER);
-            List<FilesInfo> allFiles = ListAssistant.listaInfoFilesCompleta();
+            List<AttoreInfo> uploaders = ListToProxiesAssistant.ListaInfoAttoriRuolo(FixedVariables.UPLOADER);
+            List<FilesInfo> allFiles = ListToProxiesAssistant.listaInfoFilesCompleta();
 
             List<ResumeForAdmin> resoconto = new ArrayList<>();
             if (FixedVariables.debug)
@@ -228,7 +228,7 @@ public class ListManager {
         try {
             return Response
                     .status(Response.Status.OK)
-                    .entity(new GenericEntity<List<AttoreInfo>>(ListAssistant.ListaInfoAttoriRuolo(FixedVariables.ADMINISTRATOR)) {
+                    .entity(new GenericEntity<List<AttoreInfo>>(ListToProxiesAssistant.ListaInfoAttoriRuolo(FixedVariables.ADMINISTRATOR)) {
                     })
                     .build();
         } catch (Exception e) {

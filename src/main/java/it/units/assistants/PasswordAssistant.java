@@ -10,9 +10,9 @@ import java.util.Base64;
 
 public class PasswordAssistant {
     /*
-    * https://www.baeldung.com/java-password-hashing
-    * https://dev.to/awwsmm/how-to-encrypt-a-password-in-java-42dh
-    */
+     * https://www.baeldung.com/java-password-hashing
+     * https://dev.to/awwsmm/how-to-encrypt-a-password-in-java-42dh
+     */
 
     private static final SecureRandom numeroCasuale = new SecureRandom();
     private static final int ITERATIONS = 65536;

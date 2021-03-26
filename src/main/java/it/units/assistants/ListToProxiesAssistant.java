@@ -11,7 +11,7 @@ import it.units.utils.SortByDataCaricamento;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListAssistant {
+public class ListToProxiesAssistant {
     public static List<FilesInfo> listaInfoFilesCompleta() {
         return getFilesInfos(FilesHelper.listaFilesCompleta());
     }
