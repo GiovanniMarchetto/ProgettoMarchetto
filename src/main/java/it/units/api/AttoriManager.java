@@ -201,7 +201,7 @@ public class AttoriManager {
 
             switch (attoreDaEliminare.getRole()) {
                 case FixedVariables.UPLOADER:
-                    List<Files> listaFilesUploaderEliminato = FilesHelper.listaFilesUploader(attoreDaEliminare.getUsername());
+                    List<Files> listaFilesUploaderEliminato = FilesHelper.listaFilesCompletaUploader(attoreDaEliminare.getUsername());
                     listaFilesUploaderEliminato.forEach(FilesHelper::deleteEntity);
                     break;
                 case FixedVariables.CONSUMER:

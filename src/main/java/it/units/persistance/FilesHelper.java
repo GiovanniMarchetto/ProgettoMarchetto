@@ -20,9 +20,13 @@ public class FilesHelper extends AbstractHelper {
     }
 
     public static List<Files> listaFilesUploader(String usernameUploader) {
-        List<Files> listaFilesUploader = ofy().load().type(Files.class).filter("usernameUpl", usernameUploader).list();
+        List<Files> listaFilesUploader = listaFilesCompletaUploader(usernameUploader);
         listaFilesUploader.removeIf(file -> file.getFile() == null);
         return listaFilesUploader;
+    }
+
+    public static List<Files> listaFilesCompletaUploader(String usernameUploader) {
+        return ofy().load().type(Files.class).filter("usernameUpl", usernameUploader).list();
     }
 
 
