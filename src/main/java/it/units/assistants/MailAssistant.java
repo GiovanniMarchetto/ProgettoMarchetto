@@ -67,13 +67,15 @@ public class MailAssistant {
                         "Email: " + attore.getEmail() + "\n" +
                         "\n Se vuole andare sul nostro sito acceda a: " + FixedVariables.HOMEPAGE + "\n" +
                         "\n Cordiali saluti,\n" + attoreCreator.getName()
-                        + "\n\n\n\n Questa è una email automatica, non rispondere.",
+                        + "\n\n\n\n Questa è un'email automatica, non rispondere.",
                 "Creazione del consumer " + attore.getUsername() + " avvenuta. \n"
         );
     }
 
     public static String sendNotifica(SupportFileUpload supportFileUpload, String usernameUpl, String fileID) throws MyException, NullPointerException {
         String indFile = FixedVariables.BASE_IND_DIRECT_DOWNLOAD_FILES + "/" + fileID + "/" + TokenDownloadAssistant.creaTokenDownload(fileID);
+        if (FixedVariables.debug)
+            System.out.println(indFile);
         Attore uploader = AttoreHelper.getById(Attore.class, usernameUpl);
         if (uploader == null)
             throw new NullPointerException("Uploader non trovato");
@@ -86,7 +88,7 @@ public class MailAssistant {
                         "\n Se vuole andare sul nostro sito acceda a: " + FixedVariables.HOMEPAGE + "\n" +
                         "\n Se vuole scaricare direttamente il file: " + indFile + "\n"
                         + "Cordiali saluti,\n" + uploader.getName()
-                        + "\n\n\n\n Questa è una email automatica, non rispondere.",
+                        + "\n\n\n\n Questa è un'email automatica, non rispondere.",
                 "Notifica inviata al consumer correttamente."
         );
     }

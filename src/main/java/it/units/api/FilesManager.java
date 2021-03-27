@@ -134,7 +134,7 @@ public class FilesManager {
                 if (supportFileUpload.getEmailCons().equals("") || supportFileUpload.getNameCons().equals(""))
                     throw new MyException("Informazioni mancanti per la creazione del nuovo username");
 
-                String passwordProvvisoria = UUID.randomUUID().toString();
+                String passwordProvvisoria = UUID.randomUUID().toString().substring(0, 12);
                 Attore nuovoConsumer = new Attore(supportFileUpload.getUsernameCons(), passwordProvvisoria,
                         supportFileUpload.getNameCons(), supportFileUpload.getEmailCons(), FixedVariables.CONSUMER, "");
                 AttoreHelper.saveNow(nuovoConsumer, true);
