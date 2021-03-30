@@ -97,12 +97,23 @@ public class JWTAssistant {
         return request.getHeader("Authorization").substring(7);
     }
 
-    public static String getRoleFromJWT(String token) {
-        Claim ruolo = Objects.requireNonNull(decodificaJWT(token)).getClaim("role");
+    public static String getRoleFromJWT(String token) throws MyException {
+        DecodedJWT decodedJWT = decodificaJWT(token);
+        if(decodedJWT==null)
+            throw new MyException("Token non valido");
+        Claim ruolo = decodedJWT.getClaim("role");
         return ruolo.asString();
     }
 
-    public static String getUsernameFromJWT(String token) {
-        return Objects.requireNonNull(decodificaJWT(token)).getSubject();
+    public static String getUsernameFromJWT(String token) throws MyException {
+        DecodedJWT decodedJWT = decodificaJWT(token);
+        if(decodedJWT==null)
+            throw new MyException("Token non valido");
+        return decodedJWT.getSubject();
+    }
+
+    public static String getUsernameFromHttpServletRequest(HttpServletRequest request) throws MyException {
+        String token = getTokenJWTFromRequest(request);
+        return getUsernameFromJWT(token);
     }
 }

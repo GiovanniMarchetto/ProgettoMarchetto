@@ -53,8 +53,7 @@ public class ListManager {
     public Response getUploadersWithDocumentsForTheConsumer() {
         try {
             List<Attore> uploadersList = new ArrayList<>();
-            String token = JWTAssistant.getTokenJWTFromRequest(request);
-            String consumer = JWTAssistant.getUsernameFromJWT(token);
+            String consumer = JWTAssistant.getUsernameFromHttpServletRequest(request);
             List<Files> filesConsumer = FilesHelper.listaFilesConsumer(consumer);
             for (Files file : filesConsumer) {
                 Attore a = AttoreHelper.getById(Attore.class, file.getUsernameUpl());
@@ -86,8 +85,7 @@ public class ListManager {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getFilesConsumer() {
         try {
-            String token = JWTAssistant.getTokenJWTFromRequest(request);
-            String consumer = JWTAssistant.getUsernameFromJWT(token);
+            String consumer = JWTAssistant.getUsernameFromHttpServletRequest(request);
             return Response
                     .status(Response.Status.OK)
                     .entity(new GenericEntity<List<FilesInfo>>(ListToProxiesAssistant.listaInfoFilesConsumer(consumer)) {
@@ -135,8 +133,7 @@ public class ListManager {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getFilesUploader() {
         try {
-            String token = JWTAssistant.getTokenJWTFromRequest(request);
-            String uploader = JWTAssistant.getUsernameFromJWT(token);
+            String uploader = JWTAssistant.getUsernameFromHttpServletRequest(request);
             return Response
                     .status(Response.Status.OK)
                     .entity(new GenericEntity<List<FilesInfo>>(ListToProxiesAssistant.listaInfoFilesUploader(uploader)) {

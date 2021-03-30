@@ -43,8 +43,7 @@ public class FilesManager {
     @Produces(MediaType.APPLICATION_JSON)
     public Response downloadFileFromSite(@PathParam("id") String id) {
         try {
-            String token = JWTAssistant.getTokenJWTFromRequest(request);
-            String usernameFromJWT = JWTAssistant.getUsernameFromJWT(token);
+            String usernameFromJWT = JWTAssistant.getUsernameFromHttpServletRequest(request);
             if (!usernameFromJWT.equals(Objects.requireNonNull(FilesHelper.getById(Files.class, id)).getUsernameCons()))
                 throw new MyException("Non è destinato a questo consumer");
             return downloadFile(id);
@@ -121,7 +120,7 @@ public class FilesManager {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response uploadFile(SupportFileUpload supportFileUpload) {
         try {
-            String usernameUpl = JWTAssistant.getUsernameFromJWT(JWTAssistant.getTokenJWTFromRequest(request));
+            String usernameUpl = JWTAssistant.getUsernameFromHttpServletRequest(request);
             supportFileUpload.setUsernameUpl(usernameUpl);
             supportFileUpload.setDataCaricamento(UtilsMiscellaneous.getDataString());
 
@@ -189,8 +188,7 @@ public class FilesManager {
             if (file == null || file.getFile() == null)
                 return Response.status(Response.Status.NOT_FOUND).entity("ERR - File da eliminare inesistente!").build();
 
-            String token = JWTAssistant.getTokenJWTFromRequest(request);
-            String usernameFromJWT = JWTAssistant.getUsernameFromJWT(token);
+            String usernameFromJWT = JWTAssistant.getUsernameFromHttpServletRequest(request);
             if (!file.getUsernameUpl().equals(usernameFromJWT))
                 throw new MyException("Lo può cancellare direttamente solo lo stesso uploader che lo ha caricato");
 
