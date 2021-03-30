@@ -97,7 +97,7 @@ public class AttoriManager {
      * Se non vengono modificate informazioni viene tornata una Response NO_CONTENT con una stringa di warning.
      * Se incorrono errori viene tornata una Response BAD_REQUEST accompagnata da una stringa con dei dettagli.
      */
-    @PATCH
+    @POST
     @Path("/modInfo")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)

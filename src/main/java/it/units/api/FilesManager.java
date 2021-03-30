@@ -3,6 +3,7 @@ package it.units.api;
 import it.units.assistants.JWTAssistant;
 import it.units.assistants.MailAssistant;
 import it.units.assistants.TokenDownloadAssistant;
+import it.units.entities.proxies.FilesInfo;
 import it.units.entities.storage.Attore;
 import it.units.entities.storage.Files;
 import it.units.entities.support.SupportFileUpload;
@@ -160,7 +161,7 @@ public class FilesManager {
 
             return Response
                     .status(Response.Status.OK)
-                    .entity(nuovoFile.getId())
+                    .entity(new FilesInfo(nuovoFile))
                     .build();
 
         } catch (Exception e) {
