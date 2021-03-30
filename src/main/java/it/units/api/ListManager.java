@@ -45,7 +45,7 @@ public class ListManager {
      * la lista degli uploader (con le loro informazioni) che gli hanno inviato qualche file.
      *
      * @return una Response contenente una lista di uploader con le loro informazioni.
-     * Nel caso si presentassero errori sarebbe ritornata un INTERNAL_SERVER_ERROR.
+     * Nel caso si presentassero errori sarebbe ritornata un BAD_REQUEST.
      */
     @GET
     @Path("/uploaders")
@@ -68,7 +68,7 @@ public class ListManager {
                     .build();
         } catch (Exception e) {
             if (FixedVariables.debug) System.out.println(e.getMessage() + "\n");
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
 
@@ -79,7 +79,7 @@ public class ListManager {
      *
      * @return una Response contenente la lista delle informazioni dei file che sono
      * stati inviati al consumer autenticato.
-     * Nel caso si presentassero errori sarebbe ritornata un INTERNAL_SERVER_ERROR.
+     * Nel caso si presentassero errori sarebbe ritornata un BAD_REQUEST.
      */
     @GET
     @Path("/filesConsumer")
@@ -95,7 +95,7 @@ public class ListManager {
                     .build();
         } catch (Exception e) {
             if (FixedVariables.debug) System.out.println(e.getMessage() + "\n");
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
 
@@ -104,7 +104,7 @@ public class ListManager {
      * la lista di tutti i consumer.
      *
      * @return una Response contenente una lista di consumer con le loro informazioni.
-     * Nel caso si presentassero errori sarebbe ritornata un INTERNAL_SERVER_ERROR.
+     * Nel caso si presentassero errori sarebbe ritornata un BAD_REQUEST.
      */
     @GET
     @Path("/consumers")
@@ -118,7 +118,7 @@ public class ListManager {
                     .build();
         } catch (Exception e) {
             if (FixedVariables.debug) System.out.println(e.getMessage() + "\n");
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
 
@@ -128,7 +128,7 @@ public class ListManager {
      *
      * @return una Response contenente la lista delle informazioni dei file che sono
      * stati caricati dall'uploader autenticato.
-     * Nel caso si presentassero errori sarebbe ritornata un INTERNAL_SERVER_ERROR.
+     * Nel caso si presentassero errori sarebbe ritornata un BAD_REQUEST.
      */
     @GET
     @Path("/filesUploader")
@@ -144,7 +144,7 @@ public class ListManager {
                     .build();
         } catch (Exception e) {
             if (FixedVariables.debug) System.out.println(e.getMessage() + "\n");
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
 
@@ -156,7 +156,7 @@ public class ListManager {
      *
      * @param date contiene la data di inizio e la data di fine del resoconto.
      * @return una Response con il resoconto per il periodo selezionato.
-     * Nel caso si presentassero errori sarebbe ritornata un INTERNAL_SERVER_ERROR.
+     * Nel caso si presentassero errori sarebbe ritornata un BAD_REQUEST.
      */
     @POST
     @Path("/resumeForAdmin")
@@ -210,7 +210,7 @@ public class ListManager {
                     .build();
         } catch (Exception e) {
             if (FixedVariables.debug) System.out.println(e.getMessage() + "\n");
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
 
@@ -219,7 +219,7 @@ public class ListManager {
      * la lista di tutti gli amministratori presenti sulla piattaforma.
      *
      * @return una Response con la lista degli amministratori.
-     * Nel caso si presentassero errori sarebbe ritornata un INTERNAL_SERVER_ERROR.
+     * Nel caso si presentassero errori sarebbe ritornata un BAD_REQUEST.
      */
     @GET
     @Path("/administrators")
@@ -233,7 +233,7 @@ public class ListManager {
                     .build();
         } catch (Exception e) {
             if (FixedVariables.debug) System.out.println(e.getMessage() + "\n");
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
 
