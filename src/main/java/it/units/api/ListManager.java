@@ -71,7 +71,6 @@ public class ListManager {
         }
     }
 
-
     /**
      * Web Service che espone la possibilità ad un consumer autenticato di reperire
      * la lista delle informazioni dei file che gli sono stati inviati.
