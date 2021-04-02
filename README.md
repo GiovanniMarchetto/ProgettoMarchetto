@@ -49,3 +49,19 @@ I vari web service qui contenuti contengono ciascuno anche una breve documentazi
     - /administrators, serve ad ottenere la lista di tutti gli amministratori per l'amministratore che richiede il servizio tramite GET.
 
 - LoginManager.java, accessibile al path "/login", espone il web service per i login.
+
+### assistant
+- FilterAssistant: contiene il metodo per filtrare le richieste in base al token jwt e, se indicato, in base ad un ruolo. Viene utilizzato in tutti i filtri di questo genere.
+- JWTAssistant: gestisce la creazione, la decodifica (e il recupero di informazioni) e la verifica dei token jwt. Viene utilizzato ovunque si interagisca con il token jwt.
+- ListToProxiesAssistant: gestisce il filtraggio delle informazioni dalle entità storage a quelle proxies. In particolare si occupa delle liste (ordinate).
+- MailAssistant: gestisce l'invio delle mail. Ci sono due configurazioni per due tipologie di e-mail: per la notifica e per la creazione di un utente.
+- PasswordAssistant: gestiscono la crittografia delle password con il metodo del hash&salt. Si può cambiare la lunghezza e l'algoritmo a piacere.
+- TokenDownloadAssistant: gestiscono la creazione e la verifica del token per il download diretto. Esso consiste in un jwt con un segreto diverso dagli altri jwt e con un diverso soggetto.
+
+## Proposte finali per miglioramenti
+Varie proposte finali per migliorare alcuni aspetti, ma che richiederebbero troppo tempo e si sono reputate superflue per l'esame:
+- Astrazione dell'entità dell'attore così da eliminare il campo stringa con il ruolo. Era stato fatto nel primo approccio al progetto ma poi per scelte seguenti si era scelto per l'approccio corrente.
+- Aggiunta di Firebase per il login e la gestione password.L'autenticazione verrebbe fatta su Firebase e nel datastore verrebbero salvate solo le altre informazioni per ogni utente. Il vincolo del login con username e password potrebbe essere sorpassato obbligando ogni utente ad avere anche una mail univoca.
+Ci sarebbe anche la possibilità di aggiungerlo direttamente nel client.
+- Mettere una scadenza ai token mandati via mail. Non si è messa per una supposizione sulle specifiche del progetto.
+- Creare la parte di test.

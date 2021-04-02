@@ -17,6 +17,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 
 public class MailAssistant {
+
+    // https://cloud.google.com/appengine/docs/standard/java/mail/
+    // https://github.com/GoogleCloudPlatform/java-docs-samples/blob/2e5996c68440134a79f1511c57529fa5cf987628/appengine-java8/mail/src/main/java/com/example/appengine/mail/MailServlet.java
+
     public static String sendMail(String indirizzoFrom, String nomeFrom,
                                   String indirizzoTo, String nomeTo, String oggettoMail,
                                   String testoMail, String responseSuccess) throws MyException {

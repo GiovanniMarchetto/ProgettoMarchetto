@@ -14,9 +14,10 @@ import it.units.utils.MyException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Objects;
 
 public class JWTAssistant {
+
+    // https://github.com/auth0/java-jwt
 
     private static final String secret = "MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCrVUGkFzAvIR9RdygtRbifB" +
             "KTFqbxNWUSEyE06t1i9+aN11GvYlN61SvYE+5qkdKLJfdzCSvcOLpGeyao3vblzUz8qhLpPDbNN5x84KTdNXgAWKhTKbRGCI6xgvFg" +
@@ -99,7 +100,7 @@ public class JWTAssistant {
 
     public static String getRoleFromJWT(String token) throws MyException {
         DecodedJWT decodedJWT = decodificaJWT(token);
-        if(decodedJWT==null)
+        if (decodedJWT == null)
             throw new MyException("Token non valido");
         Claim ruolo = decodedJWT.getClaim("role");
         return ruolo.asString();
@@ -107,7 +108,7 @@ public class JWTAssistant {
 
     public static String getUsernameFromJWT(String token) throws MyException {
         DecodedJWT decodedJWT = decodificaJWT(token);
-        if(decodedJWT==null)
+        if (decodedJWT == null)
             throw new MyException("Token non valido");
         return decodedJWT.getSubject();
     }
