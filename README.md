@@ -55,8 +55,53 @@ I vari web service qui contenuti contengono ciascuno anche una breve documentazi
 - JWTAssistant: gestisce la creazione, la decodifica (e il recupero di informazioni) e la verifica dei token jwt. Viene utilizzato ovunque si interagisca con il token jwt.
 - ListToProxiesAssistant: gestisce il filtraggio delle informazioni dalle entità storage a quelle proxies. In particolare si occupa delle liste (ordinate).
 - MailAssistant: gestisce l'invio delle mail. Ci sono due configurazioni per due tipologie di e-mail: per la notifica e per la creazione di un utente.
-- PasswordAssistant: gestiscono la crittografia delle password con il metodo del hash&salt. Si può cambiare la lunghezza e l'algoritmo a piacere.
+- PasswordAssistant: gestiscono la crittografia delle password con il metodo dell'hash&salt. Si può cambiare la lunghezza e l'algoritmo a piacere.
 - TokenDownloadAssistant: gestiscono la creazione e la verifica del token per il download diretto. Esso consiste in un jwt con un segreto diverso dagli altri jwt e con un diverso soggetto.
+
+### entities
+Tutte le classi hanno i rispettivi getter e setter e almeno il costruttore vuoto. Per una descrizione delle caratteristiche delle entità vedi le specifiche del progetto.
+
+#### proxies
+Contiene le classi utili per il filtraggio delle informazioni prima di passarle al client.
+- AttoreInfo: proxies per le entità di tipo Attore. Il costruttore prende in input un Attore. Ha come attributi sotto forma di stringhe: username, name, email e logo.
+- FilesInfo: proxies per le entità di tipo Files. Il costruttore prende in input un Files. Ha come attributi sotto forma di stringhe: id, usernameUpl (username dell'uploader), usernameCons (username del consumer), name (del file), dataCaricamento, dataVisualizzazione, indirizzoIP (del primo download), hashtag.
+#### storage
+Contiene le entità così come vengono effettivamente salvate nel database, quindi sono marcate come @Entity.
+- Attore: come chiave primaria utilizza l'username. Ha inoltre le stringhe: password (hash della password), salt, name, email, role (indicizzato), logo. Il costruttore prende in input tutti i valori tranne il salt che verrà impostato manualmente.
+- Files: come chiave primaria utilizza una stringa id univoca generata tramite una libreria. Ci sono due parametri in più rispetto alle specifiche: usernameUpl e usernameCons, entrambi stringhe indicizzate. Il file vero e proprio è salvato come array di bit. Poi sono salvati come stringhe: name, dataCaricamento, dataVisualizzazione, indirizzoIP, hashtag.
+#### support
+- FromTo: serve per la gestione delle date per la redazione del resoconto. Prende due stringhe come parametri: from e to.
+- ResumeFromAdmin: serve per la creazione del resoconto. Prende in ingresso tre stringhe: username, name e email (dell'uploader); e due interi: numDocCaricati, numConsDiversi.
+- SupportFileUpload: serve per la gestione dell'upload del file, che viene trasmesso come stringa in base64. Prende in input solo stringhe: file, nameFile, hashtag, dataCaricamento, usernameUpl, usernameCons, nameCons, emailCons.
+
+### filters
+Contiene i filtri dell'applicazione. Tranne il CORSFilter tutti sfruttano il FilterAssistant. Sono tutti annotati con @WebFilter, ma per gestire la gerarchia di esecuzione si è dovuto ricorrere alla mappatura tramite web.xml.
+
+- AdministratorFilter: controlla se si ha un token jwt valido e si appartiene alla categoria degli administrator, altrimenti risponde con il codice 403-Forbidden. Filtraggio valido per le liste degli amministratori e per il resoconto.
+- AuthenticationFilter: controlla se si ha un token jwt valido.
+- ConsumerFilter: controlla se si ha un token jwt valido e si appartiene alla categoria dei consumer, altrimenti risponde con il codice 403-Forbidden. Filtraggio valido per la lista degli uploader che hanno caricato file per il consumer, per la lista dei file del consumer e per il download dei file.
+- CORSFilter: serve per la Cross-Origin Policy.
+- UploaderFilter: controlla se si ha un token jwt valido e si appartiene alla categoria degli uploader, altrimenti risponde con il codice 403-Forbidden. Filtraggio valido per la lista dei consumer, la lista dei file caricati dall'uploader, per l'upload e per l'eliminazione dei file.
+
+### listners
+- DatiDefault: serve per la creazione di un administrator predefinito.
+- Objectifystarter: serve ad inizializzare Objectify nelle nuove istanze.
+
+### persistance
+Contiene le classi che si relazionano direttamente con il database.
+- AbstractHelper: è una classe astratta per salvare ed eliminare delle entità, oppure per trovare una particolare entità attraverso la sua chiave primaria e alla tipologia di entità.
+- AttoreHelper: estensione dell'AbstractHelper che implementa il salvataggio di un attore cambiando la password (quindi che sia nuovo o si voglia solo modificare la password), quindi eseguendo l'hash e salvando il sale. Implementa anche la ricerca nel database degli attori per ruolo.
+- FilesHelper: estensione dell'AbstractHelper che implementa la ricerca dei file nel database, in base ai diversi parametri indicizzati.
+
+### utils
+- FixedVariables: contiene delle variabili fisse che servono trasversalmente in tutto il progetto.
+- MyException: estende le eccezioni. In questo momento è utile soltanto per differenziare le eccezioni di questo progetto.
+- SortByDataCaricamento: implementa un comparatore per i FilesInfo ed è utile per l'ordinamento dei files.
+- UtilsMiscellaneous: contiene vari metodi utili.
+
+### web.xml
+Oltre alla mappatura dei filtri e dei listner già descritta nei rispettivi sottocapitoli, c'è la mappatura dell'ObjectifyFilter, necessaria per la corretta esecuzione di Objectify. Questo filtro passa a controllo tutti gli url-pattern.   
+Il welcome-file è stato impostato su index.html. Infine contiene la configurazione della servlet per il servizio REST di Jersey.
 
 ## Proposte finali per miglioramenti
 Varie proposte finali per migliorare alcuni aspetti, ma che richiederebbero troppo tempo e si sono reputate superflue per l'esame:
