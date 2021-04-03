@@ -21,7 +21,7 @@ Parte del front-end (src/main/webapp)
 
 pom.xml: contiene le dipendenze necessarie per il progetto
 
-Default_README: contiene delle informazioni legate alla creazione del progetto
+Default_readme: contiene delle informazioni legate alla creazione del progetto
 
 ## Descrizione back-end
 
