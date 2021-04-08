@@ -52,8 +52,6 @@ public class JWTAssistant {
                     .withIssuedAt(dataCorrente)
                     .withExpiresAt(dataScadenza)
                     .withClaim("role", ruolo)
-                    .withClaim("name", name)
-                    .withClaim("email", email)
                     .sign(algoritmo);
 
             if (FixedVariables.debug)
